@@ -17,7 +17,12 @@ namespace _12F_Mozgo_dolog
 		int mass;
 		//Color color;
 		SolidBrush brush;
+		Bitmap planetTexture;
 		static List<CelestialBody> list = new List<CelestialBody>(); // ezt muszáj itt inicializálni most.
+		int countOfRFrames = 0;
+		int frameIndex = 0;
+		List<Bitmap> rotationFrames = new List<Bitmap>();
+
 		public static Graphics g; // a Form1-ben, kívülről inicializálom, így nem kell using (Graphics g...)-t használni frame-enként
 
 		public CelestialBody(Vector location, Vector velocity, int size, int mass, Color color)
@@ -28,6 +33,54 @@ namespace _12F_Mozgo_dolog
 			this.mass = mass;
 			//this.color = color;
 			this.brush = new SolidBrush(color);			
+			CelestialBody.list.Add(this);
+		}
+
+		public CelestialBody(Vector location, Vector velocity, int size, int mass, Bitmap palentTexture)
+		{
+			this.location = location;
+			this.velocity = velocity;
+			this.size = size;
+			this.mass = mass;
+			//this.color = color;
+			this.countOfRFrames = 20;
+			Bitmap frame = new Bitmap(size, size);
+			this.planetTexture = palentTexture;
+
+			Bitmap shadow;
+
+			using (Graphics g2 = Graphics.FromImage(frame))
+			{
+				for (int i = 0; i < countOfRFrames; i++)
+				{
+					
+
+					g2.Clear(Color.Transparent);
+					g2.DrawImage(planetTexture, planetTexture.Width / countOfRFrames * i, 0, planetTexture.Width, size);
+					g2.DrawImage(planetTexture, (planetTexture.Width / countOfRFrames * i) - planetTexture.Width, 0, planetTexture.Width, size);
+
+					Color color;
+					Brush brush;
+					Bitmap mask = new Bitmap(Properties.Resources.mask, size, size);
+					for (int y = 0; y < size; y++)
+					{
+						for (int x = 0; x < size; x++)
+						{
+							color = mask.GetPixel(x, y);
+							brush = new SolidBrush(Color.FromArgb(255-color.A, 0, 0, 0));
+							g2.FillRectangle(brush, x, y, 1, 1);
+						}
+					}
+
+					shadow = Properties.Resources.shadow;
+					shadow.RotateFlip(RotateFlipType.Rotate90FlipNone);
+					g2.DrawImage(shadow, 0, 0, size, size);
+
+					this.rotationFrames.Add(new Bitmap(frame));					
+				}
+			}
+			frame.Dispose();
+
 			CelestialBody.list.Add(this);
 		}
 
@@ -46,7 +99,15 @@ namespace _12F_Mozgo_dolog
 		public void Draw(Graphics g)
 		{
 			Point h = location.ToPoint();
-			g.FillEllipse(brush, h.X - size / 2, h.Y - size / 2, size, size);
+			if (countOfRFrames == 0)
+				g.FillEllipse(brush, h.X - size / 2, h.Y - size / 2, size, size);
+			else
+			{
+				g.DrawImage(rotationFrames[frameIndex], h.X - size / 2, h.Y - size / 2);
+				frameIndex++;
+				if(frameIndex == countOfRFrames)
+					frameIndex = 0;
+			}
 		}
 
 		public static void DrawAll(PictureBox pictureBox1)

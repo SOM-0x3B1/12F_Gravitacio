@@ -17,7 +17,7 @@ namespace _12F_Mozgo_dolog
 
 
 		CelestialBody mozgo = new CelestialBody(new Vector(90, 90), new Vector(7, 4), 30, 2, Color.Orange);
-		CelestialBody mozgo2 = new CelestialBody(new Vector(30, 60), new Vector(-3, 2.5), 20, 1, Color.Blue);
+		CelestialBody mozgo2 = new CelestialBody(new Vector(30, 60), new Vector(0.5, 0.1), 40, 1, Properties.Resources.earth);
 
 		public Form1()
 		{
