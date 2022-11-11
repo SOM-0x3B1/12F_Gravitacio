@@ -56,18 +56,36 @@ namespace _12F_Mozgo_dolog
 			for (int i = 0; i < list.Count; i++)
 				list[i].Draw(g);
 
-			pictureBox1.Refresh();
+			//pictureBox1.Refresh(); //nem működik, mert cross-threading lenne
+			Refresh(pictureBox1);
+		}
+
+		private static void Refresh(PictureBox pictureBox1) //a fő szálon futó pictureBox1 frissítése
+		{
+			if (pictureBox1.InvokeRequired)
+			{
+				pictureBox1.Invoke(new MethodInvoker(
+				delegate ()
+				{
+					pictureBox1.Refresh();
+				}));
+			}
+			else
+				pictureBox1.Refresh();
 		}
 
 
 		public static bool running = false;
-		internal static void StartSimulation(PictureBox pictureBox1)
+		internal static void StartSimulation(PictureBox pictureBox1, CancellationTokenSource _canceller)
 		{
 			while (running)
 			{
 				Thread.Sleep(50);
 				MoveAll();
 				DrawAll(pictureBox1);
+
+				if (_canceller.Token.IsCancellationRequested)
+					break;
 			}
 		}
 	}
