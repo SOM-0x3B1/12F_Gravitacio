@@ -7,17 +7,17 @@ using System.Drawing;
 
 namespace _12F_Mozgo_dolog
 {
-	struct Vektor
+	struct Vector
 	{
 		public double X, Y;
 
-		public Vektor(double X, double Y)
+		public Vector(double X, double Y)
 		{
 			this.X = X;
 			this.Y = Y;
 		}
 
-		public static Vektor operator +(Vektor a, Vektor b) => new Vektor(a.X + b.X, a.Y + b.Y);
+		public static Vector operator +(Vector a, Vector b) => new Vector(a.X + b.X, a.Y + b.Y);
 
 		public Point ToPoint() => new Point((int)Math.Round(X), (int)Math.Round(Y));
 
