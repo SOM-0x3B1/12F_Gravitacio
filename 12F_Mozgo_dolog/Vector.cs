@@ -18,8 +18,13 @@ namespace _12F_Mozgo_dolog
 		}
 
 		public static Vector operator +(Vector a, Vector b) => new Vector(a.X + b.X, a.Y + b.Y);
+        public static Vector operator -(Vector a, Vector b) => new Vector(a.X - b.X, a.Y - b.Y);
+        public static Vector operator *(Vector a, double d) => new Vector(a.X * d, a.Y * d);
+        public static Vector operator /(Vector a, double d) => new Vector(a.X / d, a.Y / d);
+        
+        public double Hossz() => Math.Sqrt(X * X + Y * Y);
 
-		public Point ToPoint() => new Point((int)Math.Round(X), (int)Math.Round(Y));
+        public Point ToPoint() => new Point((int)Math.Round(X), (int)Math.Round(Y));
 
 	}
 }

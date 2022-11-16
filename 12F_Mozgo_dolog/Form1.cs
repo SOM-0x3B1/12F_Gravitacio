@@ -16,8 +16,8 @@ namespace _12F_Mozgo_dolog
 		private CancellationTokenSource _canceller;
 
 
-		CelestialBody mozgo = new CelestialBody(new Vector(90, 90), new Vector(7, 4), 30, 2, Color.Orange);
-		CelestialBody mozgo2 = new CelestialBody(new Vector(30, 60), new Vector(1, 1), 80, 1, Properties.Resources.earth);
+		CelestialBody mozgo = new CelestialBody(new Vector(90, 90), new Vector(1, 1), 40, 40, Color.Orange);
+		CelestialBody mozgo2 = new CelestialBody(new Vector(30, 60), new Vector(1, 2), 30, 10, Properties.Resources.earth);
 
 		public Form1()
 		{

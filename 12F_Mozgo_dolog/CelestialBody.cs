@@ -24,6 +24,7 @@ namespace _12F_Mozgo_dolog
 		Bitmap shadow;
 		Bitmap mask;
 		List<Bitmap> rotationFrames = new List<Bitmap>();
+		List<Vector> movements;
 
 		public static Graphics g; // a Form1-ben, kívülről inicializálom, így nem kell using (Graphics g...)-t használni frame-enként
 
@@ -33,8 +34,10 @@ namespace _12F_Mozgo_dolog
 			this.velocity = velocity;
 			this.size = size;
 			this.mass = mass;
-			//this.color = color;
-			this.brush = new SolidBrush(color);			
+            this.movements = new List<Vector>();
+
+            //this.color = color;
+            this.brush = new SolidBrush(color);			
 			CelestialBody.list.Add(this);
 		}
 
@@ -44,6 +47,8 @@ namespace _12F_Mozgo_dolog
 			this.velocity = velocity;
 			this.size = size;
 			this.mass = mass;
+			this.movements = new List<Vector>();
+
 			//this.color = color;
 			this.countOfRFrames = 100;
 			Bitmap frame = new Bitmap(size, size);
@@ -84,7 +89,21 @@ namespace _12F_Mozgo_dolog
 			CelestialBody.list.Add(this);
 		}
 
-		internal void Move()
+        private static void CalcAllGVectors()
+        {
+            for (int i = 0; i < list.Count; i++)
+                for (int j = 0; j < list.Count; j++)
+					if(list[i] != list[j])
+						list[i].movements.Add(list[i].Gravity(list[j]));
+        }
+		private static void SetAllVelocity()
+		{			
+			for (int i = 0; i < list.Count; i++)
+                for (int j = 0; j < list[i].movements.Count; j++)
+                    list[i].velocity += list[i].movements[j];
+        }
+
+        internal void Move()
 		{
 			this.location += this.velocity;
 		}
@@ -95,8 +114,21 @@ namespace _12F_Mozgo_dolog
 				list[i].Move();
 		}
 
+        Vector Gravity(CelestialBody that)
+        {
+            double d = this.DirectionFrom(that); // ez is vektoraritmetika!
+            double dsqr = d * d;
+            double vectord = that.mass / dsqr;
 
-		public void Draw(Graphics g)
+            Vector vector = that.location - this.location; // egy komplett vektoraritmetikát ki kell majd dolgoznunk!
+            Vector vectorUnit = vector / d;// John Carmack! 
+            return vectorUnit * vectord;
+        }
+
+        private double DirectionFrom(CelestialBody that) => (this.location - that.location).Hossz();
+
+
+        public void Draw(Graphics g)
 		{
 			Point h = location.ToPoint();
 			if (countOfRFrames == 0)
@@ -142,6 +174,9 @@ namespace _12F_Mozgo_dolog
 			while (running)
 			{
 				Thread.Sleep(20);
+
+				CalcAllGVectors();
+				SetAllVelocity();
 				MoveAll();
 				DrawAll(pictureBox1);
 
