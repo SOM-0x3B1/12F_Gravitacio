@@ -40,15 +40,15 @@
             // 
             this.pictureBox1.BackColor = System.Drawing.Color.White;
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox1.Location = new System.Drawing.Point(315, 117);
+            this.pictureBox1.Location = new System.Drawing.Point(12, 69);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(247, 224);
+            this.pictureBox1.Size = new System.Drawing.Size(776, 369);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(315, 60);
+            this.button1.Location = new System.Drawing.Point(233, 12);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(112, 51);
             this.button1.TabIndex = 1;
@@ -58,7 +58,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(450, 60);
+            this.button2.Location = new System.Drawing.Point(447, 12);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(112, 51);
             this.button2.TabIndex = 2;
@@ -69,7 +69,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(590, 79);
+            this.label1.Location = new System.Drawing.Point(592, 12);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(24, 13);
             this.label1.TabIndex = 3;
@@ -78,7 +78,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(620, 79);
+            this.label2.Location = new System.Drawing.Point(622, 12);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(13, 13);
             this.label2.TabIndex = 4;

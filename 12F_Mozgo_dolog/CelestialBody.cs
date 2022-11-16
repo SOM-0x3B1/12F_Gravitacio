@@ -41,7 +41,7 @@ namespace _12F_Mozgo_dolog
 			CelestialBody.list.Add(this);
 		}
 
-		public CelestialBody(Vector location, Vector velocity, int size, int mass, Bitmap palentTexture)
+		public CelestialBody(Vector location, Vector velocity, int size, int mass, Bitmap palentTexture, bool hasShadow)
 		{
 			this.location = location;
 			this.velocity = velocity;
@@ -53,8 +53,11 @@ namespace _12F_Mozgo_dolog
 			this.countOfRFrames = 100;
 			Bitmap frame = new Bitmap(size, size);
 			this.planetTexture = palentTexture;
-			shadow = Properties.Resources.shadow;
-			shadow.RotateFlip(RotateFlipType.Rotate90FlipNone);
+			if (hasShadow)
+			{
+				shadow = Properties.Resources.shadow;
+				shadow.RotateFlip(RotateFlipType.Rotate90FlipNone);
+			}
 			mask = new Bitmap(Properties.Resources.mask, size, size);
 
 			using (Graphics g2 = Graphics.FromImage(frame))
@@ -77,8 +80,9 @@ namespace _12F_Mozgo_dolog
 							brush.Dispose();
 						}
 					}
-					
-					g2.DrawImage(shadow, -2, -2, size + 4, size + 4);
+
+					if (hasShadow)
+						g2.DrawImage(shadow, -2, -2, size + 4, size + 4);
 
 					this.rotationFrames.Add(new Bitmap(frame));					
 				}
