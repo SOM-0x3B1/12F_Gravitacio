@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Threading;
-using System.Linq;
 
 namespace _12F_Mozgo_dolog
 {
@@ -21,18 +20,21 @@ namespace _12F_Mozgo_dolog
 		static List<CelestialBody> list = new List<CelestialBody>(); // ezt muszáj itt inicializálni most.
 		int countOfRFrames = 0;
 		int frameIndex = 0;
+		bool hasShadow;
 		Bitmap shadow;
 		Bitmap mask;
 		List<Bitmap> rotationFrames = new List<Bitmap>();
 
 		public static int wayPointLookAhead;
-		//List<BasicCB> wayPoints = new List<BasicCB>();
-		Queue<Point> future = new Queue<Point>();
+		//List<BasicCB> wayPoints = new List<BasicCB>();		
 		Queue<Point> history = new Queue<Point>();
 		LinkedList<int> llist = new LinkedList<int>();
 
+		public static BasicCB sun;
+
 
 		public static Graphics g; // a Form1-ben, kívülről inicializálom, így nem kell using (Graphics g...)-t használni frame-enként
+		public static Label label3;
 
 		public CelestialBody(Vector location, Vector velocity, int size, double mass, Color color)
 		{
@@ -62,11 +64,9 @@ namespace _12F_Mozgo_dolog
 			this.countOfRFrames = 100;
 			Bitmap frame = new Bitmap(size, size);
 			this.planetTexture = palentTexture;
+			this.hasShadow = hasShadow;
 			if (hasShadow)
-			{
-				shadow = Properties.Resources.shadow;
-				shadow.RotateFlip(RotateFlipType.Rotate90FlipNone);
-			}
+				shadow = new Bitmap(Properties.Resources.shadow);
 			mask = new Bitmap(Properties.Resources.mask, size, size);
 
 
@@ -89,10 +89,7 @@ namespace _12F_Mozgo_dolog
 							g2.FillRectangle(brush, x, y, 1, 1);
 							brush.Dispose();
 						}
-					}
-
-					if (hasShadow)
-						g2.DrawImage(shadow, -2, -2, size + 4, size + 4);					
+					}					
 				}
 
 				frame.MakeTransparent(Color.Black);
@@ -146,6 +143,12 @@ namespace _12F_Mozgo_dolog
 
         private double DirectionFrom(CelestialBody that) => (this.location - that.location).Distance();
 
+		private int AngleFromSun(Point p)
+        {
+			double result = (double)Math.Atan2(p.Y - sun.future.Peek().Y, p.X - sun.future.Peek().X) * (double)(180 / Math.PI)+90;
+			Settext(label3, result.ToString());
+			return (int)result;
+        }
 
 		/*public static void RecordHistroy()
         {
@@ -153,7 +156,20 @@ namespace _12F_Mozgo_dolog
                 list[i].history.Enqueue(list[i].location.ToPoint());
 		}*/
 
-        public void Draw(Graphics g)
+		public static Bitmap RotateImage(Bitmap b, int angle)
+		{
+			Bitmap returnBitmap = new Bitmap(b.Width, b.Height);
+			using (Graphics g = Graphics.FromImage(returnBitmap))
+			{
+				g.TranslateTransform((float)b.Width / 2, (float)b.Height / 2);
+				g.RotateTransform(angle);
+				g.TranslateTransform(-(float)b.Width / 2, -(float)b.Height / 2);
+				g.DrawImage(b, new Point(0, 0));
+			}
+			return returnBitmap;
+		}
+
+		public void Draw(Graphics g)
 		{
             Queue<Point> tempFuture = new Queue<Point>(future);            
 
@@ -163,9 +179,12 @@ namespace _12F_Mozgo_dolog
 			for (int i = 0; i < wayPointLookAhead - 1; i++)
 			{
 				cpoint = tempFuture.Dequeue();
-				SolidBrush wayPointBrush = new SolidBrush(Color.FromArgb(255 - 255 * i / wayPointLookAhead, 255, 255, 255));
-				g.FillEllipse(wayPointBrush, cpoint.X - 1, cpoint.Y - 1, 2, 2);
-				wayPointBrush.Dispose();
+				if (i % 5 == 0)
+				{
+					SolidBrush wayPointBrush = new SolidBrush(Color.FromArgb(255 - 255 * i / wayPointLookAhead, 255, 255, 255));
+					g.FillEllipse(wayPointBrush, cpoint.X - 1, cpoint.Y - 1, 2, 2);
+					wayPointBrush.Dispose();
+				}	
 			}
             tempFuture.Clear();
 
@@ -176,9 +195,12 @@ namespace _12F_Mozgo_dolog
 				for (int i = 0; i < history.Count; i++)
 				{
 					cpoint = tempHistroy.Dequeue();
-					SolidBrush wayPointBrush = new SolidBrush(Color.FromArgb(255 * i / history.Count, 255, 255, 255));
-					g.FillEllipse(wayPointBrush, cpoint.X - 1, cpoint.Y - 1, 2, 2);
-					wayPointBrush.Dispose();
+					if (i % 5 == 0)
+					{
+						SolidBrush wayPointBrush = new SolidBrush(Color.FromArgb(255 * i / history.Count, 255, 255, 255));
+						g.FillEllipse(wayPointBrush, cpoint.X - 1, cpoint.Y - 1, 2, 2);
+						wayPointBrush.Dispose();
+					}
 				}
 				tempHistroy.Clear();
 				
@@ -197,11 +219,21 @@ namespace _12F_Mozgo_dolog
 				if (frameIndex == countOfRFrames)
 					frameIndex = 0;
 			}
+
+			if (hasShadow)
+			{
+				/*using (Graphics g4 = Graphics.FromImage(shadow)) {
+					g4.TranslateTransform((float)shadow.Width / 2, (float)shadow.Height / 2);
+					g4.RotateTransform(AngleFromSun());
+					g4.TranslateTransform(-(float)shadow.Width / 2, -(float)shadow.Height / 2);
+				}*/
+				g.DrawImage(RotateImage(shadow, AngleFromSun(CBPoint)), CBPoint.X - size / 2 - 2, CBPoint.Y - size / 2 - 2, size + 4, size + 4);
+			}
 		}
 
 		public static void DrawAll(PictureBox pictureBox1)
 		{
-			g.Clear(Color.Black); // Frame törlése
+			g.Clear(Color.Black); //Frame törlése
 
 			for (int i = 0; i < list.Count; i++)
 				list[i].Draw(g);
@@ -241,7 +273,7 @@ namespace _12F_Mozgo_dolog
         public static bool running = false;
 		internal static void StartSimulation(PictureBox pictureBox1, Label label2, CancellationTokenSource _canceller)
 		{
-			int time = 0;			
+			int time = 0;
 
 			while (running)
 			{

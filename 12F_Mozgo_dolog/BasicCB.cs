@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace _12F_Mozgo_dolog
 {
@@ -13,6 +15,8 @@ namespace _12F_Mozgo_dolog
         public int size;
         public double mass;
         public List<Vector> movements;
+
+        public Queue<Point> future = new Queue<Point>();
 
         public BasicCB() { }
 
