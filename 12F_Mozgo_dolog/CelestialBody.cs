@@ -50,7 +50,7 @@ namespace _12F_Mozgo_dolog
 			CelestialBody.list.Add(this);
 		}
 
-		public CelestialBody(Vector location, Vector velocity, int size, double mass, Bitmap palentTexture, bool hasShadow)
+		public CelestialBody(Vector location, Vector velocity, int size, double mass, Bitmap planetTexture, bool hasShadow)
 		{
 			this.location = location;
 			this.velocity = velocity;
@@ -61,34 +61,57 @@ namespace _12F_Mozgo_dolog
 			//this.color = color;
 			this.countOfRFrames = 100;
 			Bitmap frame = new Bitmap(size, size);
-			this.planetTexture = palentTexture;
+			this.planetTexture = new Bitmap(planetTexture, (int)Math.Round((double)planetTexture.Width / planetTexture.Height * size), size);
 			if (hasShadow)
 			{
 				shadow = Properties.Resources.shadow;
 				shadow.RotateFlip(RotateFlipType.Rotate90FlipNone);
 			}
+
 			mask = new Bitmap(Properties.Resources.mask, size, size);
+			Bitmap cBitmap;
 
 			using (Graphics g2 = Graphics.FromImage(frame))
 			{
 				for (int i = 0; i < countOfRFrames; i++)
-				{			
+				{
+					/*Color color;
+					for (int y = 0; y < planetTexture.Height; y++)
+					{
+						for (int x = 0; x < planetTexture.Height; x++)
+						{
+							color = mask.GetPixel(x, y);
+							if(color.A == 0)
+								planetTexture.SetPixel((int)Math.Round(((double)planetTexture.Width / countOfRFrames) * i), y, Color.FromArgb(0, 0, 0, 0));
+						}
+					}
+
 					g2.Clear(Color.Transparent);
 					g2.DrawImage(planetTexture, (int)Math.Round(((double)planetTexture.Width / countOfRFrames) * i), 0, planetTexture.Width, size);
-					g2.DrawImage(planetTexture, (int)Math.Round(((double)planetTexture.Width / countOfRFrames) * i) - planetTexture.Width, 0, planetTexture.Width, size);
+					g2.DrawImage(planetTexture, (int)Math.Round(((double)planetTexture.Width / countOfRFrames) * i) - planetTexture.Width, 0, planetTexture.Width, size);*/
+
+					
+					cBitmap = new Bitmap(size, size);
+					int offset = (int)Math.Round(((double)this.planetTexture.Width / countOfRFrames) * i);
+
+					using (Graphics g3 = Graphics.FromImage(cBitmap))
+					{
+						g3.DrawImage(this.planetTexture, offset, 0, size, size);
+						g3.DrawImage(this.planetTexture, offset - this.planetTexture.Width, 0, size, size);
+					}
 
 					Color color;
-					Brush brush;					
 					for (int y = 0; y < size; y++)
 					{
 						for (int x = 0; x < size; x++)
 						{
 							color = mask.GetPixel(x, y);
-							brush = new SolidBrush(Color.FromArgb(255-color.A, 0, 0, 0));
-							g2.FillRectangle(brush, x, y, 1, 1);
-							brush.Dispose();
+							if (color.A < 122)
+								cBitmap.SetPixel(x, y, Color.FromArgb(0, 0, 0, 0));
 						}
 					}
+					g2.DrawImage(cBitmap, 0, 0);
+					cBitmap.Dispose();
 
 					if (hasShadow)
 						g2.DrawImage(shadow, -2, -2, size + 4, size + 4);
