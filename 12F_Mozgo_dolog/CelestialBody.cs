@@ -34,7 +34,7 @@ namespace _12F_Mozgo_dolog
 
 		public static Graphics g; // a Form1-ben, kívülről inicializálom, így nem kell using (Graphics g...)-t használni frame-enként
 
-		public CelestialBody(Vector location, Vector velocity, int size, int mass, Color color)
+		public CelestialBody(Vector location, Vector velocity, int size, double mass, Color color)
 		{
 			this.location = location;
 			this.velocity = velocity;
@@ -50,7 +50,7 @@ namespace _12F_Mozgo_dolog
 			CelestialBody.list.Add(this);
 		}
 
-		public CelestialBody(Vector location, Vector velocity, int size, int mass, Bitmap palentTexture, bool hasShadow)
+		public CelestialBody(Vector location, Vector velocity, int size, double mass, Bitmap palentTexture, bool hasShadow)
 		{
 			this.location = location;
 			this.velocity = velocity;
@@ -110,11 +110,14 @@ namespace _12F_Mozgo_dolog
 						list[i].movements.Add(list[i].Gravity(list[j]));
         }
 		public static void SetAllVelocity()
-		{			
+		{
 			for (int i = 0; i < list.Count; i++)
-                for (int j = 0; j < list[i].movements.Count; j++)
-                    list[i].velocity += list[i].movements[j];
-        }
+			{
+				for (int j = 0; j < list[i].movements.Count; j++)
+					list[i].velocity += list[i].movements[j];
+				list[i].movements.Clear();
+			}
+		}
 
         internal void Move()
 		{
@@ -139,7 +142,7 @@ namespace _12F_Mozgo_dolog
             return vectorUnit * vectord;
         }
 
-        private double DirectionFrom(CelestialBody that) => (this.location - that.location).Hossz();
+        private double DirectionFrom(CelestialBody that) => (this.location - that.location).Distance();
 
 
 		/*public static void RecordHistroy()

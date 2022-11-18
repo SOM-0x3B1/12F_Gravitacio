@@ -11,7 +11,7 @@ namespace _12F_Mozgo_dolog
         public Vector location;
         public Vector velocity;
         public int size;
-        public int mass;
+        public double mass;
         public List<Vector> movements;
 
         public BasicCB() { }

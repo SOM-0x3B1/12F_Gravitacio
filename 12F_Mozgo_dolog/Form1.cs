@@ -15,8 +15,9 @@ namespace _12F_Mozgo_dolog
 	{
 		private CancellationTokenSource _canceller;
 
-		CelestialBody mozgo = new CelestialBody(new Vector(300, 90), new Vector(0, 0), 100, 10, Properties.Resources.sun, false);
-		CelestialBody mozgo2 = new CelestialBody(new Vector(200, 60), new Vector(2, -1), 50, 1, Properties.Resources.earth, true);
+		CelestialBody sun = new CelestialBody(new Vector(760, 300), new Vector(0, 0), 100, 300, Properties.Resources.sun, false);
+		CelestialBody earth = new CelestialBody(new Vector(700, 60), new Vector(1, 0), 50, 10, Properties.Resources.earth, true);
+		CelestialBody mars = new CelestialBody(new Vector(740, 540), new Vector(-1, 0), 40, 8, Color.Orange);
 
 		public Form1()
 		{
@@ -28,7 +29,7 @@ namespace _12F_Mozgo_dolog
 			CelestialBody.g.Clear(Color.Black);
 			pictureBox1.Refresh();
 
-			CelestialBody.wayPointLookAhead = 100;
+			CelestialBody.wayPointLookAhead = 200;
             for (int i = 0; i < CelestialBody.wayPointLookAhead; i++)
             {
                 CelestialBody.CalcAllGVectors();
