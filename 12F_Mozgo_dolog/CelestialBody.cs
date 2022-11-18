@@ -69,32 +69,34 @@ namespace _12F_Mozgo_dolog
 			}
 			mask = new Bitmap(Properties.Resources.mask, size, size);
 
-			using (Graphics g2 = Graphics.FromImage(frame))
+
+			for (int i = 0; i < countOfRFrames; i++)
 			{
-				for (int i = 0; i < countOfRFrames; i++)
-				{			
+				using (Graphics g2 = Graphics.FromImage(frame))
+				{
 					g2.Clear(Color.Transparent);
 					g2.DrawImage(planetTexture, (int)Math.Round(((double)planetTexture.Width / countOfRFrames) * i), 0, planetTexture.Width, size);
 					g2.DrawImage(planetTexture, (int)Math.Round(((double)planetTexture.Width / countOfRFrames) * i) - planetTexture.Width, 0, planetTexture.Width, size);
 
 					Color color;
-					Brush brush;					
+					Brush brush;
 					for (int y = 0; y < size; y++)
 					{
 						for (int x = 0; x < size; x++)
 						{
 							color = mask.GetPixel(x, y);
-							brush = new SolidBrush(Color.FromArgb(255-color.A, 0, 0, 0));
+							brush = new SolidBrush(Color.FromArgb(255 - color.A, 0, 0, 0));
 							g2.FillRectangle(brush, x, y, 1, 1);
 							brush.Dispose();
 						}
 					}
 
 					if (hasShadow)
-						g2.DrawImage(shadow, -2, -2, size + 4, size + 4);
-
-					this.rotationFrames.Add(new Bitmap(frame));					
+						g2.DrawImage(shadow, -2, -2, size + 4, size + 4);					
 				}
+
+				frame.MakeTransparent(Color.Black);
+				this.rotationFrames.Add(new Bitmap(frame));
 			}
 
 			frame.Dispose();

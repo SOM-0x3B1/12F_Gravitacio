@@ -16,7 +16,7 @@ namespace _12F_Mozgo_dolog
 		private CancellationTokenSource _canceller;
 
 		CelestialBody sun = new CelestialBody(new Vector(760, 300), new Vector(0, 0), 100, 300, Properties.Resources.sun, false);
-		CelestialBody earth = new CelestialBody(new Vector(700, 60), new Vector(1, 0), 50, 10, Properties.Resources.earth, true);
+		CelestialBody earth = new CelestialBody(new Vector(700, 60), new Vector(0, 0), 50, 10, Properties.Resources.earth, true);
 		CelestialBody mars = new CelestialBody(new Vector(740, 540), new Vector(-1, 0), 40, 8, Color.Orange);
 
 		public Form1()
