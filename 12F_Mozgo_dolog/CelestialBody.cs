@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Threading;
+using System.Linq;
 
 namespace _12F_Mozgo_dolog
 {
@@ -16,7 +16,7 @@ namespace _12F_Mozgo_dolog
 		int size;
 		int mass;*/
 		//Color color;
-		SolidBrush brush;
+		SolidBrush brush;		
 		Bitmap planetTexture;
 		static List<CelestialBody> list = new List<CelestialBody>(); // ezt muszáj itt inicializálni most.
 		int countOfRFrames = 0;
@@ -24,6 +24,12 @@ namespace _12F_Mozgo_dolog
 		Bitmap shadow;
 		Bitmap mask;
 		List<Bitmap> rotationFrames = new List<Bitmap>();
+
+		public static int wayPointLookAhead;
+		//List<BasicCB> wayPoints = new List<BasicCB>();
+		Queue<Point> history = new Queue<Point>();
+		LinkedList<int> llist = new LinkedList<int>();
+
 
 		public static Graphics g; // a Form1-ben, kívülről inicializálom, így nem kell using (Graphics g...)-t használni frame-enként
 
@@ -34,6 +40,9 @@ namespace _12F_Mozgo_dolog
 			this.size = size;
 			this.mass = mass;
             this.movements = new List<Vector>();
+
+			/*for (int i = 0; i < wayPointLookAhead; i++)
+				wayPoints.Add(new BasicCB(this));*/
 
             //this.color = color;
             this.brush = new SolidBrush(color);			
@@ -92,14 +101,14 @@ namespace _12F_Mozgo_dolog
 			CelestialBody.list.Add(this);
 		}
 
-        private static void CalcAllGVectors()
+        public static void CalcAllGVectors()
         {
             for (int i = 0; i < list.Count; i++)
                 for (int j = 0; j < list.Count; j++)
 					if(list[i] != list[j])
 						list[i].movements.Add(list[i].Gravity(list[j]));
         }
-		private static void SetAllVelocity()
+		public static void SetAllVelocity()
 		{			
 			for (int i = 0; i < list.Count; i++)
                 for (int j = 0; j < list[i].movements.Count; j++)
@@ -109,6 +118,7 @@ namespace _12F_Mozgo_dolog
         internal void Move()
 		{
 			this.location += this.velocity;
+			history.Enqueue(this.location.ToPoint());
 		}
 
 		public static void MoveAll()
@@ -133,16 +143,34 @@ namespace _12F_Mozgo_dolog
 
         public void Draw(Graphics g)
 		{
-			Point h = location.ToPoint();
-			if (countOfRFrames == 0)
-				g.FillEllipse(brush, h.X - size / 2, h.Y - size / 2, size, size);
-			else
-			{
-				g.DrawImage(rotationFrames[frameIndex], h.X - size / 2, h.Y - size / 2);
-				frameIndex++;
-				if(frameIndex == countOfRFrames)
-					frameIndex = 0;
-			}
+            Queue<Point> tempHistory = new Queue<Point>(history);
+
+            Point h = history.Dequeue();
+
+            for (int i = 0; i < wayPointLookAhead; i++)
+            {
+                Point cpoint = tempHistory.Dequeue();
+
+				if (i == wayPointLookAhead / 2)
+				{
+                    if (countOfRFrames == 0)
+                        g.FillEllipse(brush, h.X - size / 2, h.Y - size / 2, size, size);
+                    else
+                    {
+                        g.DrawImage(rotationFrames[frameIndex], h.X - size / 2, h.Y - size / 2);
+                        frameIndex++;
+                        if (frameIndex == countOfRFrames)
+                            frameIndex = 0;
+                    }
+                }
+				else
+				{
+                    SolidBrush wayPointBrush = new SolidBrush(Color.FromArgb(255 - 255 * i / wayPointLookAhead, 255, 255, 255));
+                    g.FillEllipse(wayPointBrush, cpoint.X - 1, cpoint.Y - 1, 2, 2);
+                    wayPointBrush.Dispose();
+                }
+            }
+            tempHistory.Clear();                    
 		}
 
 		public static void DrawAll(PictureBox pictureBox1)
@@ -187,7 +215,8 @@ namespace _12F_Mozgo_dolog
         public static bool running = false;
 		internal static void StartSimulation(PictureBox pictureBox1, Label label2, CancellationTokenSource _canceller)
 		{
-			int time = 0;
+			int time = 0;			
+
 			while (running)
 			{
 				Thread.Sleep(20);

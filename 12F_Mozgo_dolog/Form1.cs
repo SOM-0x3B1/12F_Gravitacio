@@ -28,8 +28,15 @@ namespace _12F_Mozgo_dolog
 			CelestialBody.g.Clear(Color.Black);
 			pictureBox1.Refresh();
 
-			CelestialBody.DrawAll(pictureBox1);
-		}
+			CelestialBody.wayPointLookAhead = 100;
+            for (int i = 0; i < CelestialBody.wayPointLookAhead; i++)
+            {
+                CelestialBody.CalcAllGVectors();
+                CelestialBody.SetAllVelocity();
+                CelestialBody.MoveAll();
+            }
+            CelestialBody.DrawAll(pictureBox1);
+        }
 
 
 		private async void button1_Click(object sender, EventArgs e)
