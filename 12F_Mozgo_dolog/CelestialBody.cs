@@ -27,6 +27,7 @@ namespace _12F_Mozgo_dolog
 
 		public static int wayPointLookAhead;
 		//List<BasicCB> wayPoints = new List<BasicCB>();
+		Queue<Point> future = new Queue<Point>();
 		Queue<Point> history = new Queue<Point>();
 		LinkedList<int> llist = new LinkedList<int>();
 
@@ -118,7 +119,7 @@ namespace _12F_Mozgo_dolog
         internal void Move()
 		{
 			this.location += this.velocity;
-			history.Enqueue(this.location.ToPoint());
+			future.Enqueue(this.location.ToPoint());
 		}
 
 		public static void MoveAll()
@@ -141,36 +142,56 @@ namespace _12F_Mozgo_dolog
         private double DirectionFrom(CelestialBody that) => (this.location - that.location).Hossz();
 
 
+		/*public static void RecordHistroy()
+        {
+			for (int i = 0; i < list.Count; i++)
+                list[i].history.Enqueue(list[i].location.ToPoint());
+		}*/
+
         public void Draw(Graphics g)
 		{
-            Queue<Point> tempHistory = new Queue<Point>(history);
+            Queue<Point> tempFuture = new Queue<Point>(future);            
 
-            Point h = history.Dequeue();
+            Point CBPoint = future.Dequeue();
+			Point cpoint = tempFuture.Dequeue();
 
-            for (int i = 0; i < wayPointLookAhead; i++)
-            {
-                Point cpoint = tempHistory.Dequeue();
+			for (int i = 0; i < wayPointLookAhead - 1; i++)
+			{
+				cpoint = tempFuture.Dequeue();
+				SolidBrush wayPointBrush = new SolidBrush(Color.FromArgb(255 - 255 * i / wayPointLookAhead, 255, 255, 255));
+				g.FillEllipse(wayPointBrush, cpoint.X - 1, cpoint.Y - 1, 2, 2);
+				wayPointBrush.Dispose();
+			}
+            tempFuture.Clear();
 
-				if (i == wayPointLookAhead / 2)
+
+			if (history.Count > 0)
+			{
+				Queue<Point> tempHistroy = new Queue<Point>(history);
+				for (int i = 0; i < history.Count; i++)
 				{
-                    if (countOfRFrames == 0)
-                        g.FillEllipse(brush, h.X - size / 2, h.Y - size / 2, size, size);
-                    else
-                    {
-                        g.DrawImage(rotationFrames[frameIndex], h.X - size / 2, h.Y - size / 2);
-                        frameIndex++;
-                        if (frameIndex == countOfRFrames)
-                            frameIndex = 0;
-                    }
-                }
-				else
-				{
-                    SolidBrush wayPointBrush = new SolidBrush(Color.FromArgb(255 - 255 * i / wayPointLookAhead, 255, 255, 255));
-                    g.FillEllipse(wayPointBrush, cpoint.X - 1, cpoint.Y - 1, 2, 2);
-                    wayPointBrush.Dispose();
-                }
-            }
-            tempHistory.Clear();                    
+					cpoint = tempHistroy.Dequeue();
+					SolidBrush wayPointBrush = new SolidBrush(Color.FromArgb(255 * i / history.Count, 255, 255, 255));
+					g.FillEllipse(wayPointBrush, cpoint.X - 1, cpoint.Y - 1, 2, 2);
+					wayPointBrush.Dispose();
+				}
+				tempHistroy.Clear();
+				
+			}
+			history.Enqueue(CBPoint);
+			if (history.Count > wayPointLookAhead / 2)
+				history.Dequeue();
+
+
+			if (countOfRFrames == 0)
+				g.FillEllipse(brush, CBPoint.X - size / 2, CBPoint.Y - size / 2, size, size);
+			else
+			{
+				g.DrawImage(rotationFrames[frameIndex], CBPoint.X - size / 2, CBPoint.Y - size / 2);
+				frameIndex++;
+				if (frameIndex == countOfRFrames)
+					frameIndex = 0;
+			}
 		}
 
 		public static void DrawAll(PictureBox pictureBox1)
@@ -223,7 +244,7 @@ namespace _12F_Mozgo_dolog
 
 				CalcAllGVectors();
 				SetAllVelocity();
-				MoveAll();
+				MoveAll();				
 				DrawAll(pictureBox1);
 
 				Settext(label2, time.ToString());
