@@ -9,12 +9,12 @@ using System.Threading;
 
 namespace _12F_Mozgo_dolog
 {
-	class CelestialBody
+	public class CelestialBody:BasicCB
 	{
-		Vector location;
+		/*Vector location;
 		Vector velocity;
 		int size;
-		int mass;
+		int mass;*/
 		//Color color;
 		SolidBrush brush;
 		Bitmap planetTexture;
@@ -24,7 +24,6 @@ namespace _12F_Mozgo_dolog
 		Bitmap shadow;
 		Bitmap mask;
 		List<Bitmap> rotationFrames = new List<Bitmap>();
-		List<Vector> movements;
 
 		public static Graphics g; // a Form1-ben, kívülről inicializálom, így nem kell using (Graphics g...)-t használni frame-enként
 
@@ -157,7 +156,7 @@ namespace _12F_Mozgo_dolog
 			Refresh(pictureBox1);
 		}
 
-		private static void Refresh(PictureBox pictureBox1) //a fő szálon futó pictureBox1 frissítése
+		private static void Refresh(Control pictureBox1) //a fő szálon futó pictureBox1 frissítése
 		{
 			if (pictureBox1.InvokeRequired)
 			{
@@ -170,11 +169,25 @@ namespace _12F_Mozgo_dolog
 			else
 				pictureBox1.Refresh();
 		}
+        private static void Settext(Label label, string text) //a fő szálon futó pictureBox1 frissítése
+        {
+            if (label.InvokeRequired)
+            {
+                label.Invoke(new MethodInvoker(
+                delegate ()
+                {
+					label.Text = text;
+                }));
+            }
+            else
+                label.Text = text;
+        }
 
 
-		public static bool running = false;
-		internal static void StartSimulation(PictureBox pictureBox1, CancellationTokenSource _canceller)
+        public static bool running = false;
+		internal static void StartSimulation(PictureBox pictureBox1, Label label2, CancellationTokenSource _canceller)
 		{
+			int time = 0;
 			while (running)
 			{
 				Thread.Sleep(20);
@@ -184,9 +197,12 @@ namespace _12F_Mozgo_dolog
 				MoveAll();
 				DrawAll(pictureBox1);
 
-				if (_canceller.Token.IsCancellationRequested)
-					break;
-			}
+				Settext(label2, time.ToString());
+				time++;
+
+                if (_canceller.Token.IsCancellationRequested)
+                    break;
+            }
 		}
 	}
 }

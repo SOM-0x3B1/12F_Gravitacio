@@ -15,14 +15,14 @@ namespace _12F_Mozgo_dolog
 	{
 		private CancellationTokenSource _canceller;
 
-		CelestialBody mozgo = new CelestialBody(new Vector(120, 90), new Vector(1, 1), 100, 10, Properties.Resources.sun, false);
-		CelestialBody mozgo2 = new CelestialBody(new Vector(30, 60), new Vector(1.5, -1), 50, 1, Properties.Resources.earth, true);
+		CelestialBody mozgo = new CelestialBody(new Vector(300, 90), new Vector(0, 0), 100, 10, Properties.Resources.sun, false);
+		CelestialBody mozgo2 = new CelestialBody(new Vector(200, 60), new Vector(2, -1), 50, 1, Properties.Resources.earth, true);
 
 		public Form1()
 		{
 			InitializeComponent();
 
-			Bitmap bmp = new Bitmap(pictureBox1.Size.Width, pictureBox1.Size.Height);
+            Bitmap bmp = new Bitmap(pictureBox1.Size.Width, pictureBox1.Size.Height);
 			pictureBox1.Image = bmp;
 			CelestialBody.g = Graphics.FromImage(pictureBox1.Image);
 			CelestialBody.g.Clear(Color.Black);
@@ -35,24 +35,51 @@ namespace _12F_Mozgo_dolog
 		private async void button1_Click(object sender, EventArgs e)
 		{
 			button1.Enabled = false;
+			button2.Enabled = true;
 
-			_canceller = new CancellationTokenSource();			
+			_canceller = new CancellationTokenSource();
 
 			await Task.Run(() =>
 			{
 				CelestialBody.running = true;
-				CelestialBody.StartSimulation(pictureBox1, _canceller);
+				CelestialBody.StartSimulation(pictureBox1, label2, _canceller);
 			});
 
 			_canceller.Dispose();
 		}
 
-        private void button2_Click(object sender, EventArgs e)
-        {
+		private void button2_Click(object sender, EventArgs e)
+		{
 			button1.Enabled = true;
+			button2.Enabled = false;
 
 			_canceller.Cancel();
-			CelestialBody.running = false;			
+			CelestialBody.running = false;
 		}
-    }
+
+
+		//TODO
+
+		private void button1_EnabledChanged(object sender, EventArgs e){/*button1.ForeColor = button1.Enabled == false ? Color.DimGray : Color.White;*/}
+
+		private void button1_Paint(object sender, PaintEventArgs e){/*changePaint(button1, sender, e);*/}
+
+		private void button2_EnabledChanged(object sender, EventArgs e) { /*button2.ForeColor = button1.Enabled == false ? Color.DimGray : Color.White;*/ }
+
+		private void button2_Paint(object sender, PaintEventArgs e) { /*changePaint(button2, sender, e);*/ }
+
+		/*private void changePaint(Button button, object sender, PaintEventArgs e)
+		{
+            dynamic btn = (Button)sender;
+            dynamic drawBrush = new SolidBrush(btn.ForeColor);
+            dynamic sf = new StringFormat
+            {
+                Alignment = StringAlignment.Center,
+                LineAlignment = StringAlignment.Center
+            };             
+            e.Graphics.DrawString(button.Text, btn.Font, drawBrush, e.ClipRectangle, sf);
+            drawBrush.Dispose();
+            sf.Dispose();
+        }*/
+	}
 }

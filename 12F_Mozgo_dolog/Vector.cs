@@ -7,7 +7,7 @@ using System.Drawing;
 
 namespace _12F_Mozgo_dolog
 {
-	struct Vector
+	public struct Vector
 	{
 		public double X, Y;
 
