@@ -16,7 +16,7 @@ namespace _12F_Mozgo_dolog
 		int mass;*/
 		//Color color;
 		SolidBrush brush;		
-		Bitmap planetTexture;
+		//Bitmap planetTexture;
 		static List<CelestialBody> list = new List<CelestialBody>(); // ezt muszáj itt inicializálni most.
 		int countOfRFrames = 0;
 		int frameIndex = 0;
@@ -31,8 +31,7 @@ namespace _12F_Mozgo_dolog
 		LinkedList<int> llist = new LinkedList<int>();
 
 		public static BasicCB sun;
-
-
+		public static Bitmap space = Properties.Resources.space;
 		public static Graphics g; // a Form1-ben, kívülről inicializálom, így nem kell using (Graphics g...)-t használni frame-enként
 		public static Label label3;
 
@@ -52,7 +51,7 @@ namespace _12F_Mozgo_dolog
 			CelestialBody.list.Add(this);
 		}
 
-		public CelestialBody(Vector location, Vector velocity, int size, double mass, Bitmap palentTexture, bool hasShadow)
+		public CelestialBody(Vector location, Vector velocity, int size, double mass, Bitmap planetTexture, bool hasShadow)
 		{
 			this.location = location;
 			this.velocity = velocity;
@@ -63,20 +62,21 @@ namespace _12F_Mozgo_dolog
 			//this.color = color;
 			this.countOfRFrames = 100;
 			Bitmap frame = new Bitmap(size, size);
-			this.planetTexture = palentTexture;
+			//this.planetTexture = palentTexture;
 			this.hasShadow = hasShadow;
 			if (hasShadow)
 				shadow = new Bitmap(Properties.Resources.shadow);
 			mask = new Bitmap(Properties.Resources.mask, size, size);
 
+			int width = (int)Math.Round((double)size / planetTexture.Height * planetTexture.Width);
 
 			for (int i = 0; i < countOfRFrames; i++)
 			{
 				using (Graphics g2 = Graphics.FromImage(frame))
 				{
 					g2.Clear(Color.Transparent);
-					g2.DrawImage(planetTexture, (int)Math.Round(((double)planetTexture.Width / countOfRFrames) * i), 0, planetTexture.Width, size);
-					g2.DrawImage(planetTexture, (int)Math.Round(((double)planetTexture.Width / countOfRFrames) * i) - planetTexture.Width, 0, planetTexture.Width, size);
+					g2.DrawImage(planetTexture, (int)Math.Round(((double)width / countOfRFrames) * i), 0, width, size);
+					g2.DrawImage(planetTexture, (int)Math.Round(((double)width / countOfRFrames) * i) - width, 0, width, size);
 
 					Color color;
 					Brush brush;
@@ -97,6 +97,7 @@ namespace _12F_Mozgo_dolog
 			}
 
 			frame.Dispose();
+			planetTexture.Dispose();
 
 			CelestialBody.list.Add(this);
 		}
@@ -233,7 +234,7 @@ namespace _12F_Mozgo_dolog
 
 		public static void DrawAll(PictureBox pictureBox1)
 		{
-			g.Clear(Color.Black); //Frame törlése
+			g.DrawImage(space, 0, 0, space.Width, space.Height); //Frame törlése
 
 			for (int i = 0; i < list.Count; i++)
 				list[i].Draw(g);
@@ -277,8 +278,6 @@ namespace _12F_Mozgo_dolog
 
 			while (running)
 			{
-				Thread.Sleep(20);
-
 				CalcAllGVectors();
 				SetAllVelocity();
 				MoveAll();				

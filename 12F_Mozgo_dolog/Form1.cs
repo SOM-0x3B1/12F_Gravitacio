@@ -29,7 +29,7 @@ namespace _12F_Mozgo_dolog
 			CelestialBody.g.Clear(Color.Black);
 			pictureBox1.Refresh();
 
-			CelestialBody.wayPointLookAhead = 400;
+			CelestialBody.wayPointLookAhead = 200;
 			CelestialBody.sun = sun;
 			CelestialBody.label3 = label3;
 			for (int i = 0; i < CelestialBody.wayPointLookAhead; i++)
