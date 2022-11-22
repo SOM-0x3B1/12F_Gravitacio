@@ -107,5 +107,11 @@
   <ItemGroup>
     <None Include="Resources\space.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\moon.jfif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\moon.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
