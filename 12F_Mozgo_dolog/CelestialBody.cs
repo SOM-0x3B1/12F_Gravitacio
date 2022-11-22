@@ -16,7 +16,7 @@ namespace _12F_Mozgo_dolog
 		int mass;*/
 		//Color color;
 		SolidBrush brush;		
-		//Bitmap planetTexture;
+		Bitmap planetTexture;
 		static List<CelestialBody> list = new List<CelestialBody>(); // ezt muszáj itt inicializálni most.
 		int countOfRFrames = 0;
 		int frameIndex = 0;
@@ -56,7 +56,7 @@ namespace _12F_Mozgo_dolog
 			this.location = location;
 			this.velocity = velocity;
 			this.size = size;
-			this.mass = mass;
+			this.mass = mass;			
 			this.movements = new List<Vector>();
 
 			//this.color = color;
@@ -65,18 +65,20 @@ namespace _12F_Mozgo_dolog
 			//this.planetTexture = palentTexture;
 			this.hasShadow = hasShadow;
 			if (hasShadow)
-				shadow = new Bitmap(Properties.Resources.shadow);
+				shadow = new Bitmap(Properties.Resources.shadow, size + 4, size + 4);
 			mask = new Bitmap(Properties.Resources.mask, size, size);
 
+
 			int width = (int)Math.Round((double)size / planetTexture.Height * planetTexture.Width);
+			this.planetTexture = new Bitmap(planetTexture, width, size);
 
 			for (int i = 0; i < countOfRFrames; i++)
 			{
 				using (Graphics g2 = Graphics.FromImage(frame))
 				{
 					g2.Clear(Color.Transparent);
-					g2.DrawImage(planetTexture, (int)Math.Round(((double)width / countOfRFrames) * i), 0, width, size);
-					g2.DrawImage(planetTexture, (int)Math.Round(((double)width / countOfRFrames) * i) - width, 0, width, size);
+					g2.DrawImage(this.planetTexture, (int)Math.Round(((double)width / countOfRFrames) * i), 0, this.planetTexture.Width, this.planetTexture.Height);
+					g2.DrawImage(this.planetTexture, (int)Math.Round(((double)width / countOfRFrames) * i) - width, 0, this.planetTexture.Width, this.planetTexture.Height);
 
 					Color color;
 					Brush brush;
@@ -98,6 +100,7 @@ namespace _12F_Mozgo_dolog
 
 			frame.Dispose();
 			planetTexture.Dispose();
+			this.planetTexture.Dispose();
 
 			CelestialBody.list.Add(this);
 		}
@@ -165,7 +168,7 @@ namespace _12F_Mozgo_dolog
 				g.TranslateTransform((float)b.Width / 2, (float)b.Height / 2);
 				g.RotateTransform(angle);
 				g.TranslateTransform(-(float)b.Width / 2, -(float)b.Height / 2);
-				g.DrawImage(b, new Point(0, 0));
+				g.DrawImage(b, 0, 0, b.Width, b.Height);
 			}
 			return returnBitmap;
 		}
@@ -215,7 +218,7 @@ namespace _12F_Mozgo_dolog
 				g.FillEllipse(brush, CBPoint.X - size / 2, CBPoint.Y - size / 2, size, size);
 			else
 			{
-				g.DrawImage(rotationFrames[frameIndex], CBPoint.X - size / 2, CBPoint.Y - size / 2);
+				g.DrawImage(rotationFrames[frameIndex], CBPoint.X - size / 2, CBPoint.Y - size / 2, rotationFrames[frameIndex].Width, rotationFrames[frameIndex].Width);
 				frameIndex++;
 				if (frameIndex == countOfRFrames)
 					frameIndex = 0;
@@ -228,7 +231,9 @@ namespace _12F_Mozgo_dolog
 					g4.RotateTransform(AngleFromSun());
 					g4.TranslateTransform(-(float)shadow.Width / 2, -(float)shadow.Height / 2);
 				}*/
-				g.DrawImage(RotateImage(shadow, AngleFromSun(CBPoint)), CBPoint.X - size / 2 - 2, CBPoint.Y - size / 2 - 2, size + 4, size + 4);
+				Bitmap rotatedShadow = RotateImage(shadow, AngleFromSun(CBPoint));
+				g.DrawImage(rotatedShadow, CBPoint.X - size / 2 - 2, CBPoint.Y - size / 2 - 2, shadow.Width, shadow.Height);
+				rotatedShadow.Dispose();
 			}
 		}
 
