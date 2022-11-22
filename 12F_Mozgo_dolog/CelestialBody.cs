@@ -28,12 +28,12 @@ namespace _12F_Mozgo_dolog
 		public static int wayPointLookAhead;
 		//List<BasicCB> wayPoints = new List<BasicCB>();		
 		Queue<Point> history = new Queue<Point>();
-		LinkedList<int> llist = new LinkedList<int>();
+		//LinkedList<int> llist = new LinkedList<int>();
 
 		public static BasicCB sun;
 		public static Bitmap space = Properties.Resources.space;
 		public static Graphics g; // a Form1-ben, kívülről inicializálom, így nem kell using (Graphics g...)-t használni frame-enként
-		public static Label label3;
+		//public static Label label3;
 
 		public CelestialBody(Vector location, Vector velocity, int size, double mass, Color color)
 		{
@@ -150,7 +150,7 @@ namespace _12F_Mozgo_dolog
 		private int AngleFromSun(Point p)
         {
 			double result = (double)Math.Atan2(p.Y - sun.future.Peek().Y, p.X - sun.future.Peek().X) * (double)(180 / Math.PI)+90;
-			Settext(label3, result.ToString());
+			//Settext(label3, result.ToString());
 			return (int)result;
         }
 
@@ -218,7 +218,7 @@ namespace _12F_Mozgo_dolog
 				g.FillEllipse(brush, CBPoint.X - size / 2, CBPoint.Y - size / 2, size, size);
 			else
 			{
-				g.DrawImage(rotationFrames[frameIndex], CBPoint.X - size / 2, CBPoint.Y - size / 2, rotationFrames[frameIndex].Width, rotationFrames[frameIndex].Width);
+				g.DrawImage(rotationFrames[frameIndex], CBPoint.X - size / 2, CBPoint.Y - size / 2, rotationFrames[frameIndex].Width, rotationFrames[frameIndex].Height);
 				frameIndex++;
 				if (frameIndex == countOfRFrames)
 					frameIndex = 0;
@@ -277,7 +277,7 @@ namespace _12F_Mozgo_dolog
 
 
         public static bool running = false;
-		internal static void StartSimulation(PictureBox pictureBox1, Label label2, CancellationTokenSource _canceller)
+		internal static void StartSimulation(PictureBox pictureBox1, Label label2, Label label3, CancellationTokenSource _canceller)
 		{
 			int time = 0;
 
@@ -290,6 +290,8 @@ namespace _12F_Mozgo_dolog
 
 				Settext(label2, time.ToString());
 				time++;
+
+				Settext(label3, Form1.centerOffset.ToString());
 
                 if (_canceller.Token.IsCancellationRequested)
                     break;
