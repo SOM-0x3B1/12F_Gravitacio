@@ -73,6 +73,16 @@ namespace _12F_Mozgo_dolog.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap glow {
+            get {
+                object obj = ResourceManager.GetObject("glow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap mars {
             get {
                 object obj = ResourceManager.GetObject("mars", resourceCulture);

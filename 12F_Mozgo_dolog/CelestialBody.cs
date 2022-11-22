@@ -22,6 +22,7 @@ namespace _12F_Mozgo_dolog
 		int frameIndex = 0;
 		bool hasShadow;
 		Bitmap shadow;
+		Bitmap glow;
 		Bitmap mask;
 		List<Bitmap> rotationFrames = new List<Bitmap>();
 
@@ -66,6 +67,9 @@ namespace _12F_Mozgo_dolog
 			this.hasShadow = hasShadow;
 			if (hasShadow)
 				shadow = new Bitmap(Properties.Resources.shadow, size + 4, size + 4);
+			else
+				glow = new Bitmap(Properties.Resources.glow, (int)(size * 1.5), (int)(size * 1.5));
+
 			mask = new Bitmap(Properties.Resources.mask, size, size);
 
 
@@ -238,6 +242,8 @@ namespace _12F_Mozgo_dolog
 				g.DrawImage(rotatedShadow, CBPoint.X - size / 2 - 2 - xOffset, CBPoint.Y - size / 2 - 2 - yOffset, shadow.Width, shadow.Height);
 				rotatedShadow.Dispose();
 			}
+			else
+				g.DrawImage(glow, CBPoint.X - (glow.Width / 2) - xOffset, CBPoint.Y - (glow.Height / 2) - yOffset, glow.Width, glow.Height);
 		}
 
 		public static void DrawAll(PictureBox pictureBox1)

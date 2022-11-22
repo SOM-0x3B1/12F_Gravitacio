@@ -37,7 +37,7 @@ namespace _12F_Mozgo_dolog
 			CelestialBody.g.Clear(Color.Black);
 			pictureBox1.Refresh();
 
-			following = sun;
+			following = earth;
 			screenOffset = following.location - new Vector(pictureBox1.Width / 2, pictureBox1.Height / 2);
 
 			CelestialBody.wayPointLookAhead = 200;
@@ -95,13 +95,13 @@ namespace _12F_Mozgo_dolog
         {
 			following = null;
 			dragging = true;
+			lastScreenOffset = screenOffset;
 			lastMousePos = new Vector(MousePosition.X, MousePosition.Y);
 		}
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
-			dragging = false;
-			lastScreenOffset = screenOffset;
+			dragging = false;			
 		}
 
         /*private void changePaint(Button button, object sender, PaintEventArgs e)
