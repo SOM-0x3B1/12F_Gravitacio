@@ -17,6 +17,11 @@ namespace _12F_Mozgo_dolog
 			this.Y = Y;
 		}
 
+		public static Vector ToVector(Point point)
+        {
+			return new Vector(point.X, point.Y);
+		}
+
 		public static Vector operator +(Vector a, Vector b) => new Vector(a.X + b.X, a.Y + b.Y);
         public static Vector operator -(Vector a, Vector b) => new Vector(a.X - b.X, a.Y - b.Y);
         public static Vector operator *(Vector a, double d) => new Vector(a.X * d, a.Y * d);
@@ -26,5 +31,10 @@ namespace _12F_Mozgo_dolog
 
         public Point ToPoint() => new Point((int)Math.Round(X), (int)Math.Round(Y));
 
+
+		public override string ToString()
+		{
+			return "{"+ (int)X + ", " + (int)Y + "}";
+		}
 	}
 }

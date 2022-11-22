@@ -180,13 +180,16 @@ namespace _12F_Mozgo_dolog
             Point CBPoint = future.Dequeue();
 			Point cpoint = tempFuture.Dequeue();
 
+			int xOffset = (int)Form1.screenOffset.X;
+			int yOffset = (int)Form1.screenOffset.Y;
+
 			for (int i = 0; i < wayPointLookAhead - 1; i++)
 			{
 				cpoint = tempFuture.Dequeue();
-				if (i % 5 == 0)
+				if (i % 10 == 0)
 				{
 					SolidBrush wayPointBrush = new SolidBrush(Color.FromArgb(255 - 255 * i / wayPointLookAhead, 255, 255, 255));
-					g.FillEllipse(wayPointBrush, cpoint.X - 1, cpoint.Y - 1, 2, 2);
+					g.FillEllipse(wayPointBrush, cpoint.X - 1- xOffset, cpoint.Y - 1- yOffset, 2, 2);
 					wayPointBrush.Dispose();
 				}	
 			}
@@ -199,10 +202,10 @@ namespace _12F_Mozgo_dolog
 				for (int i = 0; i < history.Count; i++)
 				{
 					cpoint = tempHistroy.Dequeue();
-					if (i % 5 == 0)
+					if (i % 10 == 0)
 					{
 						SolidBrush wayPointBrush = new SolidBrush(Color.FromArgb(255 * i / history.Count, 255, 255, 255));
-						g.FillEllipse(wayPointBrush, cpoint.X - 1, cpoint.Y - 1, 2, 2);
+						g.FillEllipse(wayPointBrush, cpoint.X - 1 -xOffset, cpoint.Y - 1 - yOffset, 2, 2);
 						wayPointBrush.Dispose();
 					}
 				}
@@ -215,10 +218,10 @@ namespace _12F_Mozgo_dolog
 
 
 			if (countOfRFrames == 0)
-				g.FillEllipse(brush, CBPoint.X - size / 2, CBPoint.Y - size / 2, size, size);
+				g.FillEllipse(brush, CBPoint.X - size / 2 - xOffset, CBPoint.Y - size / 2 - yOffset, size, size);
 			else
 			{
-				g.DrawImage(rotationFrames[frameIndex], CBPoint.X - size / 2, CBPoint.Y - size / 2, rotationFrames[frameIndex].Width, rotationFrames[frameIndex].Height);
+				g.DrawImage(rotationFrames[frameIndex], CBPoint.X - size / 2 - xOffset, CBPoint.Y - size / 2 - yOffset, rotationFrames[frameIndex].Width, rotationFrames[frameIndex].Height);
 				frameIndex++;
 				if (frameIndex == countOfRFrames)
 					frameIndex = 0;
@@ -232,7 +235,7 @@ namespace _12F_Mozgo_dolog
 					g4.TranslateTransform(-(float)shadow.Width / 2, -(float)shadow.Height / 2);
 				}*/
 				Bitmap rotatedShadow = RotateImage(shadow, AngleFromSun(CBPoint));
-				g.DrawImage(rotatedShadow, CBPoint.X - size / 2 - 2, CBPoint.Y - size / 2 - 2, shadow.Width, shadow.Height);
+				g.DrawImage(rotatedShadow, CBPoint.X - size / 2 - 2 - xOffset, CBPoint.Y - size / 2 - 2 - yOffset, shadow.Width, shadow.Height);
 				rotatedShadow.Dispose();
 			}
 		}
@@ -291,9 +294,18 @@ namespace _12F_Mozgo_dolog
 				Settext(label2, time.ToString());
 				time++;
 
-				Settext(label3, Form1.centerOffset.ToString());
+				Settext(label3, Form1.screenOffset.ToString());
 
-                if (_canceller.Token.IsCancellationRequested)
+				if (Form1.following == null)
+				{
+					if (Form1.dragging)
+						Form1.screenOffset = Form1.lastScreenOffset + (Form1.lastMousePos - new Vector(Form1.MousePosition.X, Form1.MousePosition.Y));
+				}
+				else
+					Form1.screenOffset = Vector.ToVector(Form1.following.future.Peek()) - new Vector(pictureBox1.Width/2, pictureBox1.Height/2);
+
+
+				if (_canceller.Token.IsCancellationRequested)
                     break;
             }
 		}
