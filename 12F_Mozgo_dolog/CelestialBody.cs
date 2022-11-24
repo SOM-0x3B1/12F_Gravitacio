@@ -36,11 +36,11 @@ namespace _12F_Mozgo_dolog
 		public static Graphics g; // a Form1-ben, kívülről inicializálom, így nem kell using (Graphics g...)-t használni frame-enként
 		//public static Label label3;
 
-		public CelestialBody(Vector location, Vector velocity, int size, double mass, Color color)
+		public CelestialBody(Vector location, Vector velocity, int height, double mass, Color color)
 		{
 			this.location = location;
 			this.velocity = velocity;
-			this.size = size;
+			this.size = height;
 			this.mass = mass;
             this.movements = new List<Vector>();
 
@@ -52,29 +52,29 @@ namespace _12F_Mozgo_dolog
 			CelestialBody.list.Add(this);
 		}
 
-		public CelestialBody(Vector location, Vector velocity, int size, double mass, Bitmap planetTexture, bool hasShadow)
+		public CelestialBody(Vector location, Vector velocity, int height, double mass, Bitmap planetTexture, bool hasShadow)
 		{
 			this.location = location;
 			this.velocity = velocity;
-			this.size = size;
+			this.size = height;
 			this.mass = mass;			
 			this.movements = new List<Vector>();
 
 			//this.color = color;
 			this.countOfRFrames = 100;
-			Bitmap frame = new Bitmap(size, size);
+			Bitmap frame = new Bitmap(height, height);
 			//this.planetTexture = palentTexture;
 			this.hasShadow = hasShadow;
 			if (hasShadow)
-				shadow = new Bitmap(Properties.Resources.shadow, size + 4, size + 4);
+				shadow = new Bitmap(Properties.Resources.shadow, height + 4, height + 4);
 			else
-				glow = new Bitmap(Properties.Resources.glow, (int)(size * 1.5), (int)(size * 1.5));
+				glow = new Bitmap(Properties.Resources.glow, (int)(height * 1.5), (int)(height * 1.5));
 
-			mask = new Bitmap(Properties.Resources.mask, size, size);
+			mask = new Bitmap(Properties.Resources.mask, height, height);
 
 
-			int width = (int)Math.Round((double)size / planetTexture.Height * planetTexture.Width);
-			this.planetTexture = new Bitmap(planetTexture, width, size);
+			int width = (int)Math.Round((double)height / planetTexture.Height * planetTexture.Width);
+			this.planetTexture = new Bitmap(planetTexture, width, height);
 
 			for (int i = 0; i < countOfRFrames; i++)
 			{
@@ -86,22 +86,23 @@ namespace _12F_Mozgo_dolog
 
 					Color color;
 					Brush brush;
-					for (int y = 0; y < size; y++)
+					for (int y = 0; y < height; y++)
 					{
-						for (int x = 0; x < size; x++)
+						for (int x = 0; x < height; x++)
 						{
 							color = mask.GetPixel(x, y);
 							brush = new SolidBrush(Color.FromArgb(255 - color.A, 0, 0, 0));
 							g2.FillRectangle(brush, x, y, 1, 1);
 							brush.Dispose();
 						}
-					}					
+					}				
 				}
 
 				frame.MakeTransparent(Color.Black);
 				this.rotationFrames.Add(new Bitmap(frame));
 			}
 
+			mask.Dispose();
 			frame.Dispose();
 			planetTexture.Dispose();
 			this.planetTexture.Dispose();
@@ -109,34 +110,42 @@ namespace _12F_Mozgo_dolog
 			CelestialBody.list.Add(this);
 		}
 
-        public static void CalcAllGVectors()
+		
+		public void CalcGVectors()
         {
-            for (int i = 0; i < list.Count; i++)
-                for (int j = 0; j < list.Count; j++)
-					if(list[i] != list[j])
-						list[i].movements.Add(list[i].Gravity(list[j]));
-        }
-		public static void SetAllVelocity()
-		{
-			for (int i = 0; i < list.Count; i++)
-			{
-				for (int j = 0; j < list[i].movements.Count; j++)
-					list[i].velocity += list[i].movements[j];
-				list[i].movements.Clear();
-			}
+			for (int j = 0; j < list.Count; j++)
+				if (this != list[j])
+					this.movements.Add(this.Gravity(list[j]));
 		}
-
-        internal void Move()
+		public void SetVelocity()
+		{
+			for (int j = 0; j < this.movements.Count; j++)
+				this.velocity += this.movements[j];
+			this.movements.Clear();
+		}
+		public void Move()
 		{
 			this.location += this.velocity;
 			future.Enqueue(this.location.ToPoint());
 		}
 
+
+		public static void CalcAllGVectors()
+        {
+			for (int i = 0; i < list.Count; i++)
+				list[i].CalcGVectors();
+        }
+		public static void SetAllVelocity()
+		{
+			for (int i = 0; i < list.Count; i++)
+				list[i].SetVelocity();
+		}
 		public static void MoveAll()
 		{
 			for (int i = 0; i < list.Count; i++)
 				list[i].Move();
 		}
+
 
         Vector Gravity(CelestialBody that)
         {
@@ -193,7 +202,7 @@ namespace _12F_Mozgo_dolog
 				if (i % 10 == 0)
 				{
 					SolidBrush wayPointBrush = new SolidBrush(Color.FromArgb(255 - 255 * i / wayPointLookAhead, 255, 255, 255));
-					g.FillEllipse(wayPointBrush, cpoint.X - 1- xOffset, cpoint.Y - 1- yOffset, 2, 2);
+					g.FillEllipse(wayPointBrush, cpoint.X - 1 - xOffset, cpoint.Y - 1 - yOffset, 2, 2);
 					wayPointBrush.Dispose();
 				}	
 			}
@@ -213,8 +222,7 @@ namespace _12F_Mozgo_dolog
 						wayPointBrush.Dispose();
 					}
 				}
-				tempHistroy.Clear();
-				
+				tempHistroy.Clear();				
 			}
 			history.Enqueue(CBPoint);
 			if (history.Count > wayPointLookAhead / 2)

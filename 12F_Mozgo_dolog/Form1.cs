@@ -25,7 +25,7 @@ namespace _12F_Mozgo_dolog
 		CelestialBody sun = new CelestialBody(new Vector(760, 300), new Vector(-0.5, 0), 100, 350, Properties.Resources.sun, false);
 		CelestialBody earth = new CelestialBody(new Vector(700, 60), new Vector(0.5, 0), 50, 40, Properties.Resources.earth, true);
 		CelestialBody moon = new CelestialBody(new Vector(650, 0), new Vector(-1.5, 0.1), 20, 10, Properties.Resources.moon, true);
-		CelestialBody mars = new CelestialBody(new Vector(740, 540), new Vector(-1.5, 0), 40, 30, Properties.Resources.mars, true);
+		//CelestialBody mars = new CelestialBody(new Vector(740, 540), new Vector(-1.5, 0), 40, 30, Properties.Resources.mars, true);
 
 		public Form1()
 		{
@@ -75,7 +75,8 @@ namespace _12F_Mozgo_dolog
 			button1.Enabled = true;
 			button2.Enabled = false;
 
-			_canceller.Cancel();
+			if(_canceller != null)
+				_canceller.Cancel();
 			CelestialBody.running = false;
 		}
 
@@ -102,6 +103,28 @@ namespace _12F_Mozgo_dolog
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
 			dragging = false;			
+		}
+
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+			button2_Click(sender, e);
+
+			CelestialBody mars = new CelestialBody(new Vector(740, 540), new Vector(-1.5, 0), 40, 30, Properties.Resources.mars, true);
+			for (int i = 0; i < CelestialBody.wayPointLookAhead; i++)
+			{
+				mars.CalcGVectors();
+				mars.SetVelocity();
+				mars.Move();
+			}
+			CelestialBody.CalcAllGVectors();
+			CelestialBody.SetAllVelocity();
+			CelestialBody.MoveAll();
+
+			following = mars;
+			screenOffset = Vector.ToVector(following.future.Peek()) - new Vector(pictureBox1.Width / 2, pictureBox1.Height / 2);
+
+			CelestialBody.DrawAll(pictureBox1);
 		}
 
         /*private void changePaint(Button button, object sender, PaintEventArgs e)
