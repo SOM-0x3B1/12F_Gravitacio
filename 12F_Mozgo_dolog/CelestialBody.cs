@@ -188,15 +188,19 @@ namespace _12F_Mozgo_dolog
 
 		public void Draw(Graphics g)
 		{
-            Queue<Point> tempFuture = new Queue<Point>(future);            
-
-            Point CBPoint = future.Dequeue();
+            Queue<Point> tempFuture = new Queue<Point>(future);
+			
+			Point CBPoint;
+			if (!Form1.adding)
+				CBPoint = future.Dequeue();
+			else
+				CBPoint = future.Peek();
 			Point cpoint = tempFuture.Dequeue();
 
 			int xOffset = (int)Form1.screenOffset.X;
 			int yOffset = (int)Form1.screenOffset.Y;
 
-			for (int i = 0; i < wayPointLookAhead - 1; i++)
+			for (int i = 0; i < wayPointLookAhead - 1 && tempFuture.Count > 0; i++)
 			{
 				cpoint = tempFuture.Dequeue();
 				if (i % 10 == 0)
@@ -204,7 +208,7 @@ namespace _12F_Mozgo_dolog
 					SolidBrush wayPointBrush = new SolidBrush(Color.FromArgb(255 - 255 * i / wayPointLookAhead, 255, 255, 255));
 					g.FillEllipse(wayPointBrush, cpoint.X - 1 - xOffset, cpoint.Y - 1 - yOffset, 2, 2);
 					wayPointBrush.Dispose();
-				}	
+				}
 			}
             tempFuture.Clear();
 
@@ -300,15 +304,22 @@ namespace _12F_Mozgo_dolog
 
 			while (running)
 			{
-				CalcAllGVectors();
-				SetAllVelocity();
-				MoveAll();				
-				DrawAll(pictureBox1);
+				if (!Form1.adding)
+				{
+					CalcAllGVectors();
+					SetAllVelocity();
+					MoveAll();
 
-				Settext(label2, time.ToString());
-				time++;
+					Settext(label2, time.ToString());
+					time++;
 
-				Settext(label3, Form1.screenOffset.ToString());
+					Settext(label3, Form1.screenOffset.ToString());
+				}
+				else
+                {
+					Form1.following.future.Peek.location = Vector.ToVector(Form1.MousePosition);
+                }
+
 
 				if (Form1.following == null)
 				{
@@ -317,6 +328,10 @@ namespace _12F_Mozgo_dolog
 				}
 				else
 					Form1.screenOffset = Vector.ToVector(Form1.following.future.Peek()) - new Vector(pictureBox1.Width/2, pictureBox1.Height/2);
+
+
+				if(!Form1.creating)
+					DrawAll(pictureBox1);
 
 
 				if (_canceller.Token.IsCancellationRequested)

@@ -17,6 +17,8 @@ namespace _12F_Mozgo_dolog
 		public static Vector lastScreenOffset = new Vector(0, 0);
 		public static Vector lastMousePos = new Vector(0, 0);
 		public static bool dragging;
+		public static bool adding;
+		public static bool creating;
 		public static CelestialBody following;
 
 		private CancellationTokenSource _canceller;
@@ -108,7 +110,9 @@ namespace _12F_Mozgo_dolog
 
         private void button3_Click(object sender, EventArgs e)
         {
-			button2_Click(sender, e);
+			//button2_Click(sender, e);
+			adding = true;
+			creating = true;
 
 			CelestialBody mars = new CelestialBody(new Vector(740, 540), new Vector(-1.5, 0), 40, 30, Properties.Resources.mars, true);
 			for (int i = 0; i < CelestialBody.wayPointLookAhead; i++)
@@ -117,14 +121,13 @@ namespace _12F_Mozgo_dolog
 				mars.SetVelocity();
 				mars.Move();
 			}
-			CelestialBody.CalcAllGVectors();
-			CelestialBody.SetAllVelocity();
-			CelestialBody.MoveAll();
 
 			following = mars;
 			screenOffset = Vector.ToVector(following.future.Peek()) - new Vector(pictureBox1.Width / 2, pictureBox1.Height / 2);
 
 			CelestialBody.DrawAll(pictureBox1);
+
+			creating = false;
 		}
 
         /*private void changePaint(Button button, object sender, PaintEventArgs e)
