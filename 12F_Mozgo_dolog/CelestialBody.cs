@@ -15,6 +15,7 @@ namespace _12F_Mozgo_dolog
 		int size;
 		int mass;*/
 		//Color color;
+		string id;
 		SolidBrush brush;		
 		Bitmap planetTexture;
 		static List<CelestialBody> list = new List<CelestialBody>(); // ezt muszáj itt inicializálni most.
@@ -25,6 +26,10 @@ namespace _12F_Mozgo_dolog
 		Bitmap glow;
 		Bitmap mask;
 		List<Bitmap> rotationFrames = new List<Bitmap>();
+		Pen whitePen = new Pen(Color.White, 2);
+
+		public bool placing;
+		public bool vectoring;
 
 		public static int wayPointLookAhead;
 		//List<BasicCB> wayPoints = new List<BasicCB>();		
@@ -34,10 +39,11 @@ namespace _12F_Mozgo_dolog
 		public static BasicCB sun;
 		public static Bitmap space = Properties.Resources.space;
 		public static Graphics g; // a Form1-ben, kívülről inicializálom, így nem kell using (Graphics g...)-t használni frame-enként
-		//public static Label label3;
+		
 
-		public CelestialBody(Vector location, Vector velocity, int height, double mass, Color color)
+		public CelestialBody(string id, Vector location, Vector velocity, int height, double mass, Color color)
 		{
+			this.id = id;
 			this.location = location;
 			this.velocity = velocity;
 			this.size = height;
@@ -52,8 +58,9 @@ namespace _12F_Mozgo_dolog
 			CelestialBody.list.Add(this);
 		}
 
-		public CelestialBody(Vector location, Vector velocity, int height, double mass, Bitmap planetTexture, bool hasShadow)
+		public CelestialBody(string id, Vector location, Vector velocity, int height, double mass, Bitmap planetTexture, bool hasShadow)
 		{
+			this.id = id;
 			this.location = location;
 			this.velocity = velocity;
 			this.size = height;
@@ -186,7 +193,7 @@ namespace _12F_Mozgo_dolog
 			return returnBitmap;
 		}
 
-		public void Draw(Graphics g)
+		public void Draw()
 		{
             Queue<Point> tempFuture = new Queue<Point>(future);            
 
@@ -259,11 +266,94 @@ namespace _12F_Mozgo_dolog
 			g.DrawImage(space, 0, 0, space.Width, space.Height); //Frame törlése
 
 			for (int i = 0; i < list.Count; i++)
-				list[i].Draw(g);
+				list[i].Draw();
 
 			//pictureBox1.Refresh(); //nem működik, mert cross-threading lenne
 			Refresh(pictureBox1);
 		}
+
+
+		public void DrawPlacement()
+        {
+			Point CBPoint;
+			int xOffset = (int)Form1.screenOffset.X;
+			int yOffset = (int)Form1.screenOffset.Y;
+
+			if (!placing && !vectoring)
+			{
+				Queue<Point> tempFuture = new Queue<Point>(future);
+
+				CBPoint = future.Peek();
+				Point cpoint = tempFuture.Peek();
+
+				for (int i = 0; i < wayPointLookAhead - 1; i++)
+				{
+					cpoint = tempFuture.Peek();
+					if (i % 10 == 0)
+					{
+						SolidBrush wayPointBrush = new SolidBrush(Color.FromArgb(255 - 255 * i / wayPointLookAhead, 255, 255, 255));
+						g.FillEllipse(wayPointBrush, cpoint.X - 1 - xOffset, cpoint.Y - 1 - yOffset, 2, 2);
+						wayPointBrush.Dispose();
+					}
+				}
+				tempFuture.Clear();
+
+
+				if (history.Count > 0)
+				{
+					Queue<Point> tempHistroy = new Queue<Point>(history);
+					for (int i = 0; i < history.Count; i++)
+					{
+						cpoint = tempHistroy.Peek();
+						if (i % 10 == 0)
+						{
+							SolidBrush wayPointBrush = new SolidBrush(Color.FromArgb(255 * i / history.Count, 255, 255, 255));
+							g.FillEllipse(wayPointBrush, cpoint.X - 1 - xOffset, cpoint.Y - 1 - yOffset, 2, 2);
+							wayPointBrush.Dispose();
+						}
+					}
+					tempHistroy.Clear();
+				}
+			}
+			else
+				CBPoint = location.ToPoint();
+
+
+			if (vectoring)
+				g.DrawLine(whitePen, (int)(location.X - 1 - xOffset), (int)(location.Y - 1 - yOffset), (int)(location.X + this.velocity.X - 1 - xOffset), (int)(location.Y + this.velocity.Y - 1 - yOffset));
+
+
+			if (countOfRFrames == 0)
+				g.FillEllipse(brush, CBPoint.X - size / 2 - xOffset, CBPoint.Y - size / 2 - yOffset, size, size);
+			else
+			{
+				g.DrawImage(rotationFrames[frameIndex], CBPoint.X - size / 2 - xOffset, CBPoint.Y - size / 2 - yOffset, rotationFrames[frameIndex].Width, rotationFrames[frameIndex].Height);
+				frameIndex++;
+				if (frameIndex == countOfRFrames)
+					frameIndex = 0;
+			}
+
+			if (hasShadow)
+			{
+				Bitmap rotatedShadow = RotateImage(shadow, AngleFromSun(CBPoint));
+				g.DrawImage(rotatedShadow, CBPoint.X - size / 2 - 2 - xOffset, CBPoint.Y - size / 2 - 2 - yOffset, shadow.Width, shadow.Height);
+				rotatedShadow.Dispose();
+			}
+			else
+				g.DrawImage(glow, CBPoint.X - (glow.Width / 2) - xOffset, CBPoint.Y - (glow.Height / 2) - yOffset, glow.Width, glow.Height);
+		}
+
+		public static void DrawAllPlacement(PictureBox pictureBox1)
+		{
+			g.DrawImage(space, 0, 0, space.Width, space.Height); //Frame törlése
+
+			for (int i = 0; i < list.Count; i++)
+				list[i].DrawPlacement();
+
+			//pictureBox1.Refresh(); //nem működik, mert cross-threading lenne
+			Refresh(pictureBox1);
+		}
+
 
 		private static void Refresh(Control pictureBox1) //a fő szálon futó pictureBox1 frissítése
 		{
@@ -313,10 +403,10 @@ namespace _12F_Mozgo_dolog
 				if (Form1.following == null)
 				{
 					if (Form1.dragging)
-						Form1.screenOffset = Form1.lastScreenOffset + (Form1.lastMousePos - new Vector(Form1.MousePosition.X, Form1.MousePosition.Y));
+						Form1.screenOffset = Form1.lastScreenOffset + (Form1.lastMousePos - new Vector(Form1.MousePosition));
 				}
 				else
-					Form1.screenOffset = Vector.ToVector(Form1.following.future.Peek()) - new Vector(pictureBox1.Width/2, pictureBox1.Height/2);
+					Form1.screenOffset = new Vector(Form1.following.future.Peek()) - new Vector(pictureBox1.Width/2, pictureBox1.Height/2);
 
 
 				if (_canceller.Token.IsCancellationRequested)
