@@ -134,6 +134,9 @@ namespace _12F_Mozgo_dolog
 		{
 			this.location += this.velocity;
 			future.Enqueue(this.location.ToPoint());
+
+			if(vectoring && future.Count > wayPointLookAhead)
+				vectoring = false;
 		}
 
 
@@ -197,13 +200,13 @@ namespace _12F_Mozgo_dolog
 		{
             Queue<Point> tempFuture = new Queue<Point>(future);            
 
-            Point CBPoint = future.Dequeue();
-			Point cpoint = tempFuture.Dequeue();
+            Point CBPoint = vectoring ? future.Peek() : future.Dequeue();
+			Point cpoint;
 
 			int xOffset = (int)Form1.screenOffset.X;
 			int yOffset = (int)Form1.screenOffset.Y;
 
-			for (int i = 0; i < wayPointLookAhead - 1; i++)
+			for (int i = 0; i < tempFuture.Count; i++)
 			{
 				cpoint = tempFuture.Dequeue();
 				if (i % 10 == 0)
@@ -394,7 +397,7 @@ namespace _12F_Mozgo_dolog
 			{
 				CalcAllGVectors();
 				SetAllVelocity();
-				MoveAll();				
+				MoveAll();
 				DrawAll(pictureBox1);
 
 				Settext(label2, time.ToString());
@@ -408,12 +411,17 @@ namespace _12F_Mozgo_dolog
 						Form1.screenOffset = Form1.lastScreenOffset + (Form1.lastMousePos - new Vector(Form1.MousePosition));
 				}
 				else
-					Form1.screenOffset = new Vector(Form1.following.future.Peek()) - new Vector(pictureBox1.Width/2, pictureBox1.Height/2);
+				{
+					if (Form1.following.future.Count == 0)
+						Form1.screenOffset = Form1.following.location - new Vector(pictureBox1.Width / 2, pictureBox1.Height / 2);
+					else
+						Form1.screenOffset = new Vector(Form1.following.future.Peek()) - new Vector(pictureBox1.Width / 2, pictureBox1.Height / 2);
+				}
 
 
 				if (_canceller.Token.IsCancellationRequested)
-                    break;
-            }
+					break;
+			}
 		}
 	}
 }

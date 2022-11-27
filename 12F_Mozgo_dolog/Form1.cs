@@ -24,7 +24,7 @@ namespace _12F_Mozgo_dolog
 		
 
 		CelestialBody sun = new CelestialBody("sun", new Vector(760, 300), new Vector(-0.5, 0), 100, 500, Properties.Resources.sun, false);
-		CelestialBody earth = new CelestialBody("earth", new Vector(700, 60), new Vector(0.8, 0), 50, 40, Properties.Resources.earth, true);
+		CelestialBody earth = new CelestialBody("earth", new Vector(700, 60), new Vector(1, 0), 50, 40, Properties.Resources.earth, true);
 		CelestialBody moon = new CelestialBody("moon", new Vector(600, -100), new Vector(0.6, -0.1), 20, 10, Properties.Resources.moon, true);
 		//CelestialBody mars = new CelestialBody(new Vector(740, 540), new Vector(-1.5, 0), 40, 30, Properties.Resources.mars, true);
 
@@ -156,18 +156,13 @@ namespace _12F_Mozgo_dolog
 					mars.velocity = (lastMousePos - new Vector(MousePosition)) / 100;
 					CelestialBody.DrawAllPlacement(pictureBox1);
 				}
-				mars.vectoring = false;
+				//mars.vectoring = false;
 
 
-				for (int i = 0; i < CelestialBody.wayPointLookAhead; i++)
-				{
-					mars.CalcGVectors();
-					mars.SetVelocity();
-					mars.Move();
-				}
 				CelestialBody.CalcAllGVectors();
 				CelestialBody.SetAllVelocity();
 				CelestialBody.MoveAll();
+
 
 				CelestialBody.DrawAll(pictureBox1);
 			});
