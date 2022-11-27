@@ -21,12 +21,10 @@ namespace _12F_Mozgo_dolog
 			this.Y = point.Y;
 		}
 
-		public static Vector ToVector(Point point)
+		/*public static Vector ToVector(Point point)
         {
 			return new Vector(point.X, point.Y);
-		}
-
-		
+		}*/		
 
 		public static Vector operator +(Vector a, Vector b) => new Vector(a.X + b.X, a.Y + b.Y);
         public static Vector operator -(Vector a, Vector b) => new Vector(a.X - b.X, a.Y - b.Y);

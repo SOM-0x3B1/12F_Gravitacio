@@ -10,15 +10,10 @@ namespace _12F_Mozgo_dolog
 {
 	public class CelestialBody:BasicCB
 	{
-		/*Vector location;
-		Vector velocity;
-		int size;
-		int mass;*/
-		//Color color;
 		string id;
 		SolidBrush brush;		
 		Bitmap planetTexture;
-		static List<CelestialBody> list = new List<CelestialBody>(); // ezt muszáj itt inicializálni most.
+		static List<CelestialBody> list = new List<CelestialBody>();
 		int countOfRFrames = 0;
 		int frameIndex = 0;
 		bool hasShadow;
@@ -32,11 +27,9 @@ namespace _12F_Mozgo_dolog
 		public bool vectoring;
 
 		public static int wayPointLookAhead;
-		//List<BasicCB> wayPoints = new List<BasicCB>();		
 		Queue<Point> history = new Queue<Point>();
-		//LinkedList<int> llist = new LinkedList<int>();
 
-		public static BasicCB sun;
+		public static BasicCB lightsrc;
 		public static Bitmap space = Properties.Resources.space;
 		public static Graphics g; // a Form1-ben, kívülről inicializálom, így nem kell using (Graphics g...)-t használni frame-enként
 		
@@ -46,7 +39,7 @@ namespace _12F_Mozgo_dolog
 			this.id = id;
 			this.location = location;
 			this.velocity = velocity;
-			this.size = height;
+			this.height = height;
 			this.mass = mass;
             this.movements = new List<Vector>();
 
@@ -63,14 +56,12 @@ namespace _12F_Mozgo_dolog
 			this.id = id;
 			this.location = location;
 			this.velocity = velocity;
-			this.size = height;
+			this.height = height;
 			this.mass = mass;			
 			this.movements = new List<Vector>();
 
-			//this.color = color;
 			this.countOfRFrames = 100;
 			Bitmap frame = new Bitmap(height, height);
-			//this.planetTexture = palentTexture;
 			this.hasShadow = hasShadow;
 			if (hasShadow)
 				shadow = new Bitmap(Properties.Resources.shadow, height + 4, height + 4);
@@ -159,12 +150,12 @@ namespace _12F_Mozgo_dolog
 
         Vector Gravity(CelestialBody that)
         {
-            double d = this.DirectionFrom(that); // ez is vektoraritmetika!
+            double d = this.DirectionFrom(that);
             double dsqr = d * d;
             double vectord = that.mass / dsqr;
 
-            Vector vector = that.location - this.location; // egy komplett vektoraritmetikát ki kell majd dolgoznunk!
-            Vector vectorUnit = vector / d;// John Carmack! 
+            Vector vector = that.location - this.location;
+            Vector vectorUnit = vector / d; //John Carmack! 
             return vectorUnit * vectord;
         }
 
@@ -172,16 +163,9 @@ namespace _12F_Mozgo_dolog
 
 		private int AngleFromSun(Point p)
         {
-			double result = (double)Math.Atan2(p.Y - sun.future.Peek().Y, p.X - sun.future.Peek().X) * (double)(180 / Math.PI)+90;
-			//Settext(label3, result.ToString());
+			double result = (double)Math.Atan2(p.Y - lightsrc.future.Peek().Y, p.X - lightsrc.future.Peek().X) * (double)(180 / Math.PI)+90;
 			return (int)result;
         }
-
-		/*public static void RecordHistroy()
-        {
-			for (int i = 0; i < list.Count; i++)
-                list[i].history.Enqueue(list[i].location.ToPoint());
-		}*/
 
 		public static Bitmap RotateImage(Bitmap b, int angle)
 		{
@@ -200,19 +184,19 @@ namespace _12F_Mozgo_dolog
 		{
             Queue<Point> tempFuture = new Queue<Point>(future);            
 
-            Point CBPoint = vectoring ? future.Peek() : future.Dequeue();
-			Point cpoint;
+            Point CBLoc = vectoring ? future.Peek() : future.Dequeue();
+			Point cPoint;
 
 			int xOffset = (int)Form1.screenOffset.X;
 			int yOffset = (int)Form1.screenOffset.Y;
 
 			for (int i = 0; i < tempFuture.Count; i++)
 			{
-				cpoint = tempFuture.Dequeue();
+				cPoint = tempFuture.Dequeue();
 				if (i % 10 == 0)
 				{
 					SolidBrush wayPointBrush = new SolidBrush(Color.FromArgb(255 - 255 * i / wayPointLookAhead, 255, 255, 255));
-					g.FillEllipse(wayPointBrush, cpoint.X - 1 - xOffset, cpoint.Y - 1 - yOffset, 2, 2);
+					g.FillEllipse(wayPointBrush, cPoint.X - 1 - xOffset, cPoint.Y - 1 - yOffset, 2, 2);
 					wayPointBrush.Dispose();
 				}	
 			}
@@ -224,26 +208,26 @@ namespace _12F_Mozgo_dolog
 				Queue<Point> tempHistroy = new Queue<Point>(history);
 				for (int i = 0; i < history.Count; i++)
 				{
-					cpoint = tempHistroy.Dequeue();
+					cPoint = tempHistroy.Dequeue();
 					if (i % 10 == 0)
 					{
 						SolidBrush wayPointBrush = new SolidBrush(Color.FromArgb(255 * i / history.Count, 255, 255, 255));
-						g.FillEllipse(wayPointBrush, cpoint.X - 1 -xOffset, cpoint.Y - 1 - yOffset, 2, 2);
+						g.FillEllipse(wayPointBrush, cPoint.X - 1 -xOffset, cPoint.Y - 1 - yOffset, 2, 2);
 						wayPointBrush.Dispose();
 					}
 				}
 				tempHistroy.Clear();				
 			}
-			history.Enqueue(CBPoint);
+			history.Enqueue(CBLoc);
 			if (history.Count > wayPointLookAhead / 2)
 				history.Dequeue();
 
 
 			if (countOfRFrames == 0)
-				g.FillEllipse(brush, CBPoint.X - size / 2 - xOffset, CBPoint.Y - size / 2 - yOffset, size, size);
+				g.FillEllipse(brush, CBLoc.X - height / 2 - xOffset, CBLoc.Y - height / 2 - yOffset, height, height);
 			else
 			{
-				g.DrawImage(rotationFrames[frameIndex], CBPoint.X - size / 2 - xOffset, CBPoint.Y - size / 2 - yOffset, rotationFrames[frameIndex].Width, rotationFrames[frameIndex].Height);
+				g.DrawImage(rotationFrames[frameIndex], CBLoc.X - height / 2 - xOffset, CBLoc.Y - height / 2 - yOffset, rotationFrames[frameIndex].Width, rotationFrames[frameIndex].Height);
 				frameIndex++;
 				if (frameIndex == countOfRFrames)
 					frameIndex = 0;
@@ -251,17 +235,12 @@ namespace _12F_Mozgo_dolog
 
 			if (hasShadow)
 			{
-				/*using (Graphics g4 = Graphics.FromImage(shadow)) {
-					g4.TranslateTransform((float)shadow.Width / 2, (float)shadow.Height / 2);
-					g4.RotateTransform(AngleFromSun());
-					g4.TranslateTransform(-(float)shadow.Width / 2, -(float)shadow.Height / 2);
-				}*/
-				Bitmap rotatedShadow = RotateImage(shadow, AngleFromSun(CBPoint));
-				g.DrawImage(rotatedShadow, CBPoint.X - size / 2 - 2 - xOffset, CBPoint.Y - size / 2 - 2 - yOffset, shadow.Width, shadow.Height);
+				Bitmap rotatedShadow = RotateImage(shadow, AngleFromSun(CBLoc));
+				g.DrawImage(rotatedShadow, CBLoc.X - height / 2 - 2 - xOffset, CBLoc.Y - height / 2 - 2 - yOffset, shadow.Width, shadow.Height);
 				rotatedShadow.Dispose();
 			}
 			else
-				g.DrawImage(glow, CBPoint.X - (glow.Width / 2) - xOffset, CBPoint.Y - (glow.Height / 2) - yOffset, glow.Width, glow.Height);
+				g.DrawImage(glow, CBLoc.X - (glow.Width / 2) - xOffset, CBLoc.Y - (glow.Height / 2) - yOffset, glow.Width, glow.Height);
 		}
 
 		public static void DrawAll(PictureBox pictureBox1)
@@ -278,7 +257,7 @@ namespace _12F_Mozgo_dolog
 
 		public void DrawPlacement()
 		{
-			Point CBPoint;
+			Point CBLoc;
 			int xOffset = (int)Form1.screenOffset.X;
 			int yOffset = (int)Form1.screenOffset.Y;
 
@@ -286,16 +265,16 @@ namespace _12F_Mozgo_dolog
 			{
 				Queue<Point> tempFuture = new Queue<Point>(future);
 
-				CBPoint = future.Peek();
-				Point cpoint = tempFuture.Dequeue();
+				CBLoc = future.Peek();
+				Point cPoint = tempFuture.Dequeue();
 
 				for (int i = 0; i < future.Count - 1; i++)
 				{
-					cpoint = tempFuture.Dequeue();
+					cPoint = tempFuture.Dequeue();
 					if (i % 10 == 0)
 					{
 						SolidBrush wayPointBrush = new SolidBrush(Color.FromArgb(255 - 255 * i / wayPointLookAhead, 255, 255, 255));
-						g.FillEllipse(wayPointBrush, cpoint.X - 1 - xOffset, cpoint.Y - 1 - yOffset, 2, 2);
+						g.FillEllipse(wayPointBrush, cPoint.X - 1 - xOffset, cPoint.Y - 1 - yOffset, 2, 2);
 						wayPointBrush.Dispose();
 					}
 				}
@@ -307,11 +286,11 @@ namespace _12F_Mozgo_dolog
 					Queue<Point> tempHistroy = new Queue<Point>(history);
 					for (int i = 0; i < history.Count; i++)
 					{
-						cpoint = tempHistroy.Dequeue();
+						cPoint = tempHistroy.Dequeue();
 						if (i % 10 == 0)
 						{
 							SolidBrush wayPointBrush = new SolidBrush(Color.FromArgb(255 * i / history.Count, 255, 255, 255));
-							g.FillEllipse(wayPointBrush, cpoint.X - 1 - xOffset, cpoint.Y - 1 - yOffset, 2, 2);
+							g.FillEllipse(wayPointBrush, cPoint.X - 1 - xOffset, cPoint.Y - 1 - yOffset, 2, 2);
 							wayPointBrush.Dispose();
 						}
 					}
@@ -319,20 +298,19 @@ namespace _12F_Mozgo_dolog
 				}
 			}
 			else
-				CBPoint = location.ToPoint();
+				CBLoc = location.ToPoint();
 
 
 			if (vectoring)
 				for (int i = 0; i < wayPointLookAhead; i+=10)
 					g.FillEllipse(whiteBrush, (int)(location.X + this.velocity.X * i - 1 - xOffset), (int)(location.Y + this.velocity.Y * i - 1 - yOffset), 2 , 2);
-			//g.DrawLine(whitePen, (int)(location.X - 1 - xOffset), (int)(location.Y - 1 - yOffset), (int)(location.X + this.velocity.X - 1 - xOffset), (int)(location.Y + this.velocity.Y - 1 - yOffset));
-
+			
 
 			if (countOfRFrames == 0)
-				g.FillEllipse(brush, CBPoint.X - size / 2 - xOffset, CBPoint.Y - size / 2 - yOffset, size, size);
+				g.FillEllipse(brush, CBLoc.X - height / 2 - xOffset, CBLoc.Y - height / 2 - yOffset, height, height);
 			else
 			{
-				g.DrawImage(rotationFrames[frameIndex], CBPoint.X - size / 2 - xOffset, CBPoint.Y - size / 2 - yOffset, rotationFrames[frameIndex].Width, rotationFrames[frameIndex].Height);
+				g.DrawImage(rotationFrames[frameIndex], CBLoc.X - height / 2 - xOffset, CBLoc.Y - height / 2 - yOffset, rotationFrames[frameIndex].Width, rotationFrames[frameIndex].Height);
 				frameIndex++;
 				if (frameIndex == countOfRFrames)
 					frameIndex = 0;
@@ -340,12 +318,12 @@ namespace _12F_Mozgo_dolog
 
 			if (hasShadow)
 			{
-				Bitmap rotatedShadow = RotateImage(shadow, AngleFromSun(CBPoint));
-				g.DrawImage(rotatedShadow, CBPoint.X - size / 2 - 2 - xOffset, CBPoint.Y - size / 2 - 2 - yOffset, shadow.Width, shadow.Height);
+				Bitmap rotatedShadow = RotateImage(shadow, AngleFromSun(CBLoc));
+				g.DrawImage(rotatedShadow, CBLoc.X - height / 2 - 2 - xOffset, CBLoc.Y - height / 2 - 2 - yOffset, shadow.Width, shadow.Height);
 				rotatedShadow.Dispose();
 			}
 			else
-				g.DrawImage(glow, CBPoint.X - (glow.Width / 2) - xOffset, CBPoint.Y - (glow.Height / 2) - yOffset, glow.Width, glow.Height);
+				g.DrawImage(glow, CBLoc.X - (glow.Width / 2) - xOffset, CBLoc.Y - (glow.Height / 2) - yOffset, glow.Width, glow.Height);
 		}
 
 		public static void DrawAllPlacement(PictureBox pictureBox1)
@@ -373,7 +351,7 @@ namespace _12F_Mozgo_dolog
 			else
 				pictureBox1.Refresh();
 		}
-        private static void Settext(Label label, string text) //a fő szálon futó pictureBox1 frissítése
+        private static void SetText(Label label, string text) //a fő szálon futó pictureBox1 frissítése
         {
             if (label.InvokeRequired)
             {
@@ -389,7 +367,7 @@ namespace _12F_Mozgo_dolog
 
 
         public static bool running = false;
-		internal static void StartSimulation(PictureBox pictureBox1, Label label2, Label label3, CancellationTokenSource _canceller)
+		internal static void StartSimulation(PictureBox pictureBox1, Label timeLabel, Label offsetLabel, CancellationTokenSource _canceller)
 		{
 			int time = 0;
 
@@ -400,10 +378,9 @@ namespace _12F_Mozgo_dolog
 				MoveAll();
 				DrawAll(pictureBox1);
 
-				Settext(label2, time.ToString());
-				time++;
+				SetText(timeLabel, time.ToString());
+				time++;				
 
-				Settext(label3, Form1.screenOffset.ToString());
 
 				if (Form1.following == null)
 				{
@@ -417,6 +394,7 @@ namespace _12F_Mozgo_dolog
 					else
 						Form1.screenOffset = new Vector(Form1.following.future.Peek()) - new Vector(pictureBox1.Width / 2, pictureBox1.Height / 2);
 				}
+				SetText(offsetLabel, Form1.screenOffset.ToString());
 
 
 				if (_canceller.Token.IsCancellationRequested)

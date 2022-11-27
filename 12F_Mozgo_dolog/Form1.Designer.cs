@@ -28,82 +28,78 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.startButton = new System.Windows.Forms.Button();
+            this.stopButton = new System.Windows.Forms.Button();
+            this.timePrefixLabel = new System.Windows.Forms.Label();
+            this.timeLabel = new System.Windows.Forms.Label();
+            this.offsetLabel = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.button3 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
-            // button1
+            // startButton
             // 
-            this.button1.BackColor = System.Drawing.Color.Black;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.button1.ForeColor = System.Drawing.Color.White;
-            this.button1.Location = new System.Drawing.Point(68, 537);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(50, 50);
-            this.button1.TabIndex = 1;
-            this.button1.Text = ">";
-            this.button1.UseVisualStyleBackColor = false;
-            this.button1.EnabledChanged += new System.EventHandler(this.button1_EnabledChanged);
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            this.button1.Paint += new System.Windows.Forms.PaintEventHandler(this.button1_Paint);
+            this.startButton.BackColor = System.Drawing.Color.Black;
+            this.startButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.startButton.ForeColor = System.Drawing.Color.White;
+            this.startButton.Location = new System.Drawing.Point(68, 537);
+            this.startButton.Name = "startButton";
+            this.startButton.Size = new System.Drawing.Size(50, 50);
+            this.startButton.TabIndex = 1;
+            this.startButton.Text = ">";
+            this.startButton.UseVisualStyleBackColor = false;
+            this.startButton.Click += new System.EventHandler(this.start_Click);
             // 
-            // button2
+            // stopButton
             // 
-            this.button2.BackColor = System.Drawing.Color.Black;
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.button2.ForeColor = System.Drawing.Color.White;
-            this.button2.Location = new System.Drawing.Point(12, 537);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(50, 50);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "| |";
-            this.button2.UseVisualStyleBackColor = false;
-            this.button2.EnabledChanged += new System.EventHandler(this.button2_EnabledChanged);
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            this.button2.Paint += new System.Windows.Forms.PaintEventHandler(this.button2_Paint);
+            this.stopButton.BackColor = System.Drawing.Color.Black;
+            this.stopButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.stopButton.ForeColor = System.Drawing.Color.White;
+            this.stopButton.Location = new System.Drawing.Point(12, 537);
+            this.stopButton.Name = "stopButton";
+            this.stopButton.Size = new System.Drawing.Size(50, 50);
+            this.stopButton.TabIndex = 2;
+            this.stopButton.Text = "| |";
+            this.stopButton.UseVisualStyleBackColor = false;
+            this.stopButton.Click += new System.EventHandler(this.stop_Click);
             // 
-            // label1
+            // timePrefixLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.BackColor = System.Drawing.Color.Black;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(951, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(27, 20);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "T+";
+            this.timePrefixLabel.AutoSize = true;
+            this.timePrefixLabel.BackColor = System.Drawing.Color.Black;
+            this.timePrefixLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.timePrefixLabel.ForeColor = System.Drawing.Color.White;
+            this.timePrefixLabel.Location = new System.Drawing.Point(951, 9);
+            this.timePrefixLabel.Name = "timePrefixLabel";
+            this.timePrefixLabel.Size = new System.Drawing.Size(27, 20);
+            this.timePrefixLabel.TabIndex = 3;
+            this.timePrefixLabel.Text = "T+";
             // 
-            // label2
+            // timeLabel
             // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label2.AutoSize = true;
-            this.label2.BackColor = System.Drawing.Color.Black;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.label2.ForeColor = System.Drawing.Color.White;
-            this.label2.Location = new System.Drawing.Point(984, 9);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(18, 20);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "0";
+            this.timeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.timeLabel.AutoSize = true;
+            this.timeLabel.BackColor = System.Drawing.Color.Black;
+            this.timeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.timeLabel.ForeColor = System.Drawing.Color.White;
+            this.timeLabel.Location = new System.Drawing.Point(984, 9);
+            this.timeLabel.Name = "timeLabel";
+            this.timeLabel.Size = new System.Drawing.Size(18, 20);
+            this.timeLabel.TabIndex = 4;
+            this.timeLabel.Text = "0";
             // 
-            // label3
+            // offsetLabel
             // 
-            this.label3.AutoSize = true;
-            this.label3.BackColor = System.Drawing.Color.Black;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.label3.ForeColor = System.Drawing.Color.White;
-            this.label3.Location = new System.Drawing.Point(9, 9);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(18, 20);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "0";
+            this.offsetLabel.AutoSize = true;
+            this.offsetLabel.BackColor = System.Drawing.Color.Black;
+            this.offsetLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.offsetLabel.ForeColor = System.Drawing.Color.White;
+            this.offsetLabel.Location = new System.Drawing.Point(9, 9);
+            this.offsetLabel.Name = "offsetLabel";
+            this.offsetLabel.Size = new System.Drawing.Size(18, 20);
+            this.offsetLabel.TabIndex = 5;
+            this.offsetLabel.Text = "0";
             // 
             // pictureBox1
             // 
@@ -132,7 +128,7 @@
             this.button3.Size = new System.Drawing.Size(50, 50);
             this.button3.TabIndex = 6;
             this.button3.UseVisualStyleBackColor = false;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.button3.Click += new System.EventHandler(this.addPlanet1_Click);
             // 
             // Form1
             // 
@@ -141,11 +137,11 @@
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1064, 599);
             this.Controls.Add(this.button3);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.offsetLabel);
+            this.Controls.Add(this.timeLabel);
+            this.Controls.Add(this.timePrefixLabel);
+            this.Controls.Add(this.stopButton);
+            this.Controls.Add(this.startButton);
             this.Controls.Add(this.pictureBox1);
             this.Name = "Form1";
             this.Text = "SpaceSimulator";
@@ -158,11 +154,11 @@
 		#endregion
 
 		private System.Windows.Forms.PictureBox pictureBox1;
-		private System.Windows.Forms.Button button1;
-		private System.Windows.Forms.Button button2;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.Button startButton;
+		private System.Windows.Forms.Button stopButton;
+		private System.Windows.Forms.Label timePrefixLabel;
+		private System.Windows.Forms.Label timeLabel;
+        private System.Windows.Forms.Label offsetLabel;
         private System.Windows.Forms.Button button3;
     }
 }

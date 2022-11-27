@@ -11,7 +11,7 @@ namespace _12F_Mozgo_dolog
     {
         public Vector location;
         public Vector velocity;
-        public int size;
+        public int height;
         public double mass;
         public List<Vector> movements;
 
@@ -23,7 +23,7 @@ namespace _12F_Mozgo_dolog
         {
             this.location = cBody.location;
             this.velocity = cBody.velocity;
-            this.size = cBody.size;
+            this.height = cBody.height;
             this.mass = cBody.mass;
             this.movements = cBody.movements;
         }

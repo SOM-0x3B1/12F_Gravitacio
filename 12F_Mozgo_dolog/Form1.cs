@@ -21,11 +21,11 @@ namespace _12F_Mozgo_dolog
 		public static CelestialBody following;
 
 		private CancellationTokenSource _canceller = new CancellationTokenSource();
-		
 
-		CelestialBody sun = new CelestialBody("sun", new Vector(760, 300), new Vector(-0.5, 0), 100, 500, Properties.Resources.sun, false);
-		CelestialBody earth = new CelestialBody("earth", new Vector(700, 60), new Vector(1, 0), 50, 40, Properties.Resources.earth, true);
-		CelestialBody moon = new CelestialBody("moon", new Vector(600, -100), new Vector(0.6, -0.1), 20, 10, Properties.Resources.moon, true);
+
+		private CelestialBody sun = new CelestialBody("sun", new Vector(760, 300), new Vector(-0.5, 0), 100, 500, Properties.Resources.sun, false);
+		private CelestialBody earth = new CelestialBody("earth", new Vector(700, 60), new Vector(1, 0), 50, 40, Properties.Resources.earth, true);
+		private CelestialBody moon = new CelestialBody("moon", new Vector(600, -100), new Vector(0.6, -0.1), 20, 10, Properties.Resources.moon, true);
 		//CelestialBody mars = new CelestialBody(new Vector(740, 540), new Vector(-1.5, 0), 40, 30, Properties.Resources.mars, true);
 
 		public Form1()
@@ -42,52 +42,41 @@ namespace _12F_Mozgo_dolog
 			screenOffset = following.location - new Vector(pictureBox1.Width / 2, pictureBox1.Height / 2);
 
 			CelestialBody.wayPointLookAhead = 200;
-			CelestialBody.sun = sun;
+			CelestialBody.lightsrc = sun;
 			for (int i = 0; i < CelestialBody.wayPointLookAhead; i++)
             {
                 CelestialBody.CalcAllGVectors();
                 CelestialBody.SetAllVelocity();
                 CelestialBody.MoveAll();
             }
-            CelestialBody.DrawAll(pictureBox1);
 
-			label3.Text = screenOffset.ToString();
+            CelestialBody.DrawAll(pictureBox1);
+			offsetLabel.Text = screenOffset.ToString();
 		}
 
 
-		private async void button1_Click(object sender, EventArgs e)
+		private async void start_Click(object sender, EventArgs e)
 		{
-			button1.Enabled = false;
-			button2.Enabled = true;
+			startButton.Enabled = false;
+			stopButton.Enabled = true;
 
 			_canceller = new CancellationTokenSource();
 
 			await Task.Run(() =>
 			{
 				CelestialBody.running = true;
-				CelestialBody.StartSimulation(pictureBox1, label2, label3, _canceller);
+				CelestialBody.StartSimulation(pictureBox1, timeLabel, offsetLabel, _canceller);
 			});
 		}
 
-		private void button2_Click(object sender, EventArgs e)
+		private void stop_Click(object sender, EventArgs e)
 		{
-			button1.Enabled = true;
-			button2.Enabled = false;
+			startButton.Enabled = true;
+			stopButton.Enabled = false;
 
 			_canceller.Cancel();
 			CelestialBody.running = false;
 		}
-
-
-		//TODO
-
-		private void button1_EnabledChanged(object sender, EventArgs e){/*button1.ForeColor = button1.Enabled == false ? Color.DimGray : Color.White;*/}
-
-		private void button1_Paint(object sender, PaintEventArgs e){/*changePaint(button1, sender, e);*/}
-
-		private void button2_EnabledChanged(object sender, EventArgs e) { /*button2.ForeColor = button1.Enabled == false ? Color.DimGray : Color.White;*/ }
-
-		private void button2_Paint(object sender, PaintEventArgs e) { /*changePaint(button2, sender, e);*/ }
 
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
@@ -115,17 +104,18 @@ namespace _12F_Mozgo_dolog
 		}
 
 
-		private async void button3_Click(object sender, EventArgs e)
+		private async void addPlanet1_Click(object sender, EventArgs e)
 		{
-			button2_Click(sender, e);
+			stop_Click(null, null);
 
 			lastMousePos = new Vector(MousePosition.X, MousePosition.Y);
 			CelestialBody mars = new CelestialBody("mars", new Vector(MousePosition), new Vector(0, 0), 40, 30, Properties.Resources.mars, true);
 
 			await Task.Run(() =>
 			{
-				placing = mars;
 				mars.placing = true;
+
+				placing = mars;				
 				while (placing != null)
 				{
 					if (pictureBox1.InvokeRequired)
@@ -148,6 +138,7 @@ namespace _12F_Mozgo_dolog
 				following = mars;
 				screenOffset = following.location - new Vector(pictureBox1.Width / 2, pictureBox1.Height / 2);
 
+
 				vectoring = mars;
 				mars.vectoring = true;
 				lastMousePos = new Vector(MousePosition) + (lastScreenOffset - screenOffset);
@@ -156,7 +147,6 @@ namespace _12F_Mozgo_dolog
 					mars.velocity = (lastMousePos - new Vector(MousePosition)) / 100;
 					CelestialBody.DrawAllPlacement(pictureBox1);
 				}
-				//mars.vectoring = false;
 
 
 				CelestialBody.CalcAllGVectors();
@@ -167,21 +157,7 @@ namespace _12F_Mozgo_dolog
 				CelestialBody.DrawAll(pictureBox1);
 			});
 
-			button1_Click(sender, e);			
+			start_Click(sender, e);			
 		}
-
-        /*private void changePaint(Button button, object sender, PaintEventArgs e)
-		{
-            dynamic btn = (Button)sender;
-            dynamic drawBrush = new SolidBrush(btn.ForeColor);
-            dynamic sf = new StringFormat
-            {
-                Alignment = StringAlignment.Center,
-                LineAlignment = StringAlignment.Center
-            };             
-            e.Graphics.DrawString(button.Text, btn.Font, drawBrush, e.ClipRectangle, sf);
-            drawBrush.Dispose();
-            sf.Dispose();
-        }*/
     }
 }
