@@ -26,7 +26,7 @@ namespace _12F_Mozgo_dolog
 		Bitmap glow;
 		Bitmap mask;
 		List<Bitmap> rotationFrames = new List<Bitmap>();
-		Pen whitePen = new Pen(Color.White, 2);
+		SolidBrush whiteBrush = new SolidBrush(Color.White);
 
 		public bool placing;
 		public bool vectoring;
@@ -274,7 +274,7 @@ namespace _12F_Mozgo_dolog
 
 
 		public void DrawPlacement()
-        {
+		{
 			Point CBPoint;
 			int xOffset = (int)Form1.screenOffset.X;
 			int yOffset = (int)Form1.screenOffset.Y;
@@ -284,11 +284,11 @@ namespace _12F_Mozgo_dolog
 				Queue<Point> tempFuture = new Queue<Point>(future);
 
 				CBPoint = future.Peek();
-				Point cpoint = tempFuture.Peek();
+				Point cpoint = tempFuture.Dequeue();
 
-				for (int i = 0; i < wayPointLookAhead - 1; i++)
+				for (int i = 0; i < future.Count - 1; i++)
 				{
-					cpoint = tempFuture.Peek();
+					cpoint = tempFuture.Dequeue();
 					if (i % 10 == 0)
 					{
 						SolidBrush wayPointBrush = new SolidBrush(Color.FromArgb(255 - 255 * i / wayPointLookAhead, 255, 255, 255));
@@ -304,7 +304,7 @@ namespace _12F_Mozgo_dolog
 					Queue<Point> tempHistroy = new Queue<Point>(history);
 					for (int i = 0; i < history.Count; i++)
 					{
-						cpoint = tempHistroy.Peek();
+						cpoint = tempHistroy.Dequeue();
 						if (i % 10 == 0)
 						{
 							SolidBrush wayPointBrush = new SolidBrush(Color.FromArgb(255 * i / history.Count, 255, 255, 255));
@@ -320,7 +320,9 @@ namespace _12F_Mozgo_dolog
 
 
 			if (vectoring)
-				g.DrawLine(whitePen, (int)(location.X - 1 - xOffset), (int)(location.Y - 1 - yOffset), (int)(location.X + this.velocity.X - 1 - xOffset), (int)(location.Y + this.velocity.Y - 1 - yOffset));
+				for (int i = 0; i < wayPointLookAhead; i+=10)
+					g.FillEllipse(whiteBrush, (int)(location.X + this.velocity.X * i - 1 - xOffset), (int)(location.Y + this.velocity.Y * i - 1 - yOffset), 2 , 2);
+			//g.DrawLine(whitePen, (int)(location.X - 1 - xOffset), (int)(location.Y - 1 - yOffset), (int)(location.X + this.velocity.X - 1 - xOffset), (int)(location.Y + this.velocity.Y - 1 - yOffset));
 
 
 			if (countOfRFrames == 0)

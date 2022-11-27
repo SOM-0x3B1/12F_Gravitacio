@@ -153,7 +153,7 @@ namespace _12F_Mozgo_dolog
 				lastMousePos = new Vector(MousePosition) + (lastScreenOffset - screenOffset);
 				while (vectoring != null)
 				{
-					mars.velocity = lastMousePos - new Vector(MousePosition);
+					mars.velocity = (lastMousePos - new Vector(MousePosition)) / 100;
 					CelestialBody.DrawAllPlacement(pictureBox1);
 				}
 				mars.vectoring = false;

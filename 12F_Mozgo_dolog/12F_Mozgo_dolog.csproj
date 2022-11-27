@@ -90,9 +90,6 @@
     <None Include="Resources\mask.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\shadow.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\sun.jpg" />
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +115,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\glow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\shadow.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
