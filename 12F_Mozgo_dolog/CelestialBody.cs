@@ -12,8 +12,7 @@ namespace _12F_Mozgo_dolog
 	{
 		string id;
 		SolidBrush brush;		
-		Bitmap planetTexture;
-		static List<CelestialBody> list = new List<CelestialBody>();
+		Bitmap planetTexture;		
 		int countOfRFrames = 0;
 		int frameIndex = 0;
 		bool hasShadow;
@@ -33,9 +32,12 @@ namespace _12F_Mozgo_dolog
 		public static BasicCB lightsrc;
 		public static Bitmap space = Properties.Resources.space;
 		public static Graphics g; // a Form1-ben, kívülről inicializálom, így nem kell using (Graphics g...)-t használni frame-enként
-		
 
-		public CelestialBody(string id, Vector location, Vector velocity, int height, double mass, Color color)
+
+        public static List<CelestialBody> list = new List<CelestialBody>();
+
+
+        public CelestialBody(string id, Vector location, Vector velocity, int height, double mass, Color color)
 		{
 			this.id = id;
 			this.location = location;
@@ -372,6 +374,18 @@ namespace _12F_Mozgo_dolog
             else
                 label.Text = text;
         }
+
+
+		public bool ContainsClick(int Xp, int Yp)
+		{
+			Vector offsettedLocation = new Vector(future.Peek().X, future.Peek().Y) - Form1.screenOffset;
+			int Xc = (int)offsettedLocation.X;
+			int Yc = (int)offsettedLocation.Y;
+
+			int d = (int)Math.Sqrt(Math.Pow(Xp - Xc, 2) + Math.Pow(Yp - Yc, 2));
+
+			return d <= height / 2 ? true : false;
+		}
 
 
         public static bool running = false;

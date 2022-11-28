@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Windows.Forms;
+using System.Drawing.Imaging;
 
 namespace _12F_Mozgo_dolog
 {
@@ -23,9 +24,9 @@ namespace _12F_Mozgo_dolog
 		private CancellationTokenSource _canceller = new CancellationTokenSource();
 
 
-		private CelestialBody sun = new CelestialBody("sun", new Vector(760, 300), new Vector(-0.5, 0), 100, 500, Properties.Resources.sun, false);
-		private CelestialBody earth = new CelestialBody("earth", new Vector(700, 60), new Vector(1.05, 0), 50, 40, Properties.Resources.earth, true);
-		private CelestialBody moon = new CelestialBody("moon", new Vector(600, -100), new Vector(0.6, -0.1), 20, 10, Properties.Resources.moon, true);
+		private CelestialBody sun = new CelestialBody("sun", new Vector(760, 300), new Vector(0.5, 0), 100, 500, Properties.Resources.sun, false);
+		private CelestialBody earth = new CelestialBody("earth", new Vector(700, 60), new Vector(2, 0), 50, 40, Properties.Resources.earth, true);
+		private CelestialBody moon = new CelestialBody("moon", new Vector(600, -100), new Vector(1.3, -0.1), 20, 10, Properties.Resources.moon, true);
 		//CelestialBody mars = new CelestialBody(new Vector(740, 540), new Vector(-1.5, 0), 40, 30, Properties.Resources.mars, true);
 
 		public Form1()
@@ -38,10 +39,11 @@ namespace _12F_Mozgo_dolog
 			CelestialBody.g.Clear(Color.Black);
 			pictureBox1.Refresh();
 
-			following = earth;
-			screenOffset = following.location - new Vector(pictureBox1.Width / 2, pictureBox1.Height / 2);
+			following = sun;
+			if(following != null)
+				screenOffset = following.location - new Vector(pictureBox1.Width / 2, pictureBox1.Height / 2);
 
-			CelestialBody.wayPointLookAhead = 200;
+			CelestialBody.wayPointLookAhead = 400;
 			CelestialBody.lightsrc = sun;
 			for (int i = 0; i < CelestialBody.wayPointLookAhead; i++)
             {
@@ -83,11 +85,24 @@ namespace _12F_Mozgo_dolog
         {			
 			lastScreenOffset = screenOffset;
 
-			if (vectoring == null)
+			if (vectoring == null && placing == null)
 			{
-				lastMousePos = new Vector(MousePosition.X, MousePosition.Y);
-				following = null;
-				dragging = true;
+                lastMousePos = new Vector(MousePosition.X, MousePosition.Y);
+                Point relClickLoc = pictureBox1.PointToClient(Cursor.Position);
+				bool inCB = false;
+
+                for (int i = 0; i < CelestialBody.list.Count && !inCB; i++)
+				{					
+					inCB = CelestialBody.list[i].ContainsClick(relClickLoc.X, relClickLoc.Y);
+					if (inCB)
+						following = CelestialBody.list[i];
+                }
+
+				if (!inCB)
+				{					
+					following = null;
+					dragging = true;
+				}
 			}
 		}
 
