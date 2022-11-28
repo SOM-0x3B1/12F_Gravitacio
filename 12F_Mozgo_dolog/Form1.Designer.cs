@@ -35,6 +35,8 @@
             this.offsetLabel = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.button3 = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.fpsLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -95,7 +97,7 @@
             this.offsetLabel.BackColor = System.Drawing.Color.Black;
             this.offsetLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.offsetLabel.ForeColor = System.Drawing.Color.White;
-            this.offsetLabel.Location = new System.Drawing.Point(9, 9);
+            this.offsetLabel.Location = new System.Drawing.Point(12, 36);
             this.offsetLabel.Name = "offsetLabel";
             this.offsetLabel.Size = new System.Drawing.Size(18, 20);
             this.offsetLabel.TabIndex = 5;
@@ -130,12 +132,38 @@
             this.button3.UseVisualStyleBackColor = false;
             this.button3.Click += new System.EventHandler(this.addPlanet1_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.BackColor = System.Drawing.Color.Black;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.label1.ForeColor = System.Drawing.Color.White;
+            this.label1.Location = new System.Drawing.Point(12, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(44, 20);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "FPS:";
+            // 
+            // fpsLabel
+            // 
+            this.fpsLabel.AutoSize = true;
+            this.fpsLabel.BackColor = System.Drawing.Color.Black;
+            this.fpsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.fpsLabel.ForeColor = System.Drawing.Color.White;
+            this.fpsLabel.Location = new System.Drawing.Point(62, 9);
+            this.fpsLabel.Name = "fpsLabel";
+            this.fpsLabel.Size = new System.Drawing.Size(18, 20);
+            this.fpsLabel.TabIndex = 8;
+            this.fpsLabel.Text = "0";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1064, 599);
+            this.Controls.Add(this.fpsLabel);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.offsetLabel);
             this.Controls.Add(this.timeLabel);
@@ -160,6 +188,8 @@
 		private System.Windows.Forms.Label timeLabel;
         private System.Windows.Forms.Label offsetLabel;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Label label1;
+        public System.Windows.Forms.Label fpsLabel;
     }
 }
 

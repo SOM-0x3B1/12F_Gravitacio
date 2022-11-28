@@ -29,7 +29,8 @@ namespace _12F_Mozgo_dolog
 		public static int wayPointLookAhead;
 		Queue<Point> history = new Queue<Point>();
 
-		public static BasicCB lightsrc;
+		public static Label fpsLabel;
+        public static BasicCB lightsrc;
 		public static Bitmap space = Properties.Resources.space;
 		public static Graphics g; // a Form1-ben, kívülről inicializálom, így nem kell using (Graphics g...)-t használni frame-enként
 
@@ -384,12 +385,12 @@ namespace _12F_Mozgo_dolog
 
 			int d = (int)Math.Sqrt(Math.Pow(Xp - Xc, 2) + Math.Pow(Yp - Yc, 2));
 
-			return d <= height / 2 ? true : false;
+			return d <= height / 2;
 		}
 
 
         public static bool running = false;
-		internal static void StartSimulation(PictureBox pictureBox1, Label timeLabel, Label offsetLabel, CancellationTokenSource _canceller)
+		internal static void StartSimulation(PictureBox pictureBox1, Label timeLabel, Label offsetLabel, Label fpsLabel, CancellationTokenSource _canceller)
 		{
 			int time = 0;
 
@@ -400,7 +401,9 @@ namespace _12F_Mozgo_dolog
 				MoveAll();
 				DrawAll(pictureBox1);
 
-				SetText(timeLabel, time.ToString());
+				UpdateFPS();
+
+                SetText(timeLabel, time.ToString());
 				time++;				
 
 
@@ -418,10 +421,23 @@ namespace _12F_Mozgo_dolog
 				}
 				SetText(offsetLabel, Form1.screenOffset.ToString());
 
-
 				if (_canceller.Token.IsCancellationRequested)
 					break;
 			}
 		}
-	}
+
+        public static void UpdateFPS()
+        {
+            Form1._framesRendered++;
+
+            if ((DateTime.Now - Form1._lastTime).TotalSeconds >= 1) // one second has elapsed 
+            {                
+                Form1._fps = Form1._framesRendered;
+                Form1._framesRendered = 0;
+                Form1._lastTime = DateTime.Now;
+            }
+
+			SetText(fpsLabel, Form1._fps.ToString());
+        }
+    }
 }

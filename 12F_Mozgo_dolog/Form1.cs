@@ -23,9 +23,13 @@ namespace _12F_Mozgo_dolog
 
 		private CancellationTokenSource _canceller = new CancellationTokenSource();
 
+        public static DateTime _lastTime; // marks the beginning the measurement began
+        public static int _framesRendered; // an increasing count
+        public static int _fps; // the FPS calculated from the last measurement
 
-		private CelestialBody sun = new CelestialBody("sun", new Vector(760, 300), new Vector(0.5, 0), 100, 500, Properties.Resources.sun, false);
-		private CelestialBody earth = new CelestialBody("earth", new Vector(700, 60), new Vector(2, 0), 50, 40, Properties.Resources.earth, true);
+
+        private CelestialBody sun = new CelestialBody("sun", new Vector(760, 300), new Vector(0.1, 0), 100, 500, Properties.Resources.sun, false);
+		private CelestialBody earth = new CelestialBody("earth", new Vector(700, 60), new Vector(1.5, 0), 50, 40, Properties.Resources.earth, true);
 		private CelestialBody moon = new CelestialBody("moon", new Vector(600, -100), new Vector(1.3, -0.1), 20, 10, Properties.Resources.moon, true);
 		//CelestialBody mars = new CelestialBody(new Vector(740, 540), new Vector(-1.5, 0), 40, 30, Properties.Resources.mars, true);
 
@@ -43,7 +47,9 @@ namespace _12F_Mozgo_dolog
 			if(following != null)
 				screenOffset = following.location - new Vector(pictureBox1.Width / 2, pictureBox1.Height / 2);
 
-			CelestialBody.wayPointLookAhead = 400;
+
+			CelestialBody.fpsLabel = fpsLabel;
+			CelestialBody.wayPointLookAhead = 200;
 			CelestialBody.lightsrc = sun;
 			for (int i = 0; i < CelestialBody.wayPointLookAhead; i++)
             {
@@ -67,7 +73,7 @@ namespace _12F_Mozgo_dolog
 			await Task.Run(() =>
 			{
 				CelestialBody.running = true;
-				CelestialBody.StartSimulation(pictureBox1, timeLabel, offsetLabel, _canceller);
+				CelestialBody.StartSimulation(pictureBox1, timeLabel, offsetLabel, fpsLabel, _canceller);
 			});
 		}
 
@@ -147,7 +153,9 @@ namespace _12F_Mozgo_dolog
 						mars.location = new Vector(pictureBox1.PointToClient(Cursor.Position)) + screenOffset;
 						CelestialBody.DrawAllPlacement(pictureBox1);
 					}
-				}
+
+					CelestialBody.UpdateFPS();
+                }
 				mars.placing = false;
 
 				following = mars;
