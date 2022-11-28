@@ -24,7 +24,7 @@ namespace _12F_Mozgo_dolog
 
 
 		private CelestialBody sun = new CelestialBody("sun", new Vector(760, 300), new Vector(-0.5, 0), 100, 500, Properties.Resources.sun, false);
-		private CelestialBody earth = new CelestialBody("earth", new Vector(700, 60), new Vector(1, 0), 50, 40, Properties.Resources.earth, true);
+		private CelestialBody earth = new CelestialBody("earth", new Vector(700, 60), new Vector(1.05, 0), 50, 40, Properties.Resources.earth, true);
 		private CelestialBody moon = new CelestialBody("moon", new Vector(600, -100), new Vector(0.6, -0.1), 20, 10, Properties.Resources.moon, true);
 		//CelestialBody mars = new CelestialBody(new Vector(740, 540), new Vector(-1.5, 0), 40, 30, Properties.Resources.mars, true);
 
@@ -157,7 +157,7 @@ namespace _12F_Mozgo_dolog
 				CelestialBody.DrawAll(pictureBox1);
 			});
 
-			start_Click(sender, e);			
+			start_Click(null, null);			
 		}
     }
 }

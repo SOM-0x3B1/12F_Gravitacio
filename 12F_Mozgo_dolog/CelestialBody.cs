@@ -22,8 +22,9 @@ namespace _12F_Mozgo_dolog
 		Bitmap mask;
 		List<Bitmap> rotationFrames = new List<Bitmap>();
 		SolidBrush whiteBrush = new SolidBrush(Color.White);
+        SolidBrush opaqueBrush = new SolidBrush(Color.FromArgb(30, 255, 255, 255));
 
-		public bool placing;
+        public bool placing;
 		public bool vectoring;
 
 		public static int wayPointLookAhead;
@@ -193,6 +194,7 @@ namespace _12F_Mozgo_dolog
 			for (int i = 0; i < tempFuture.Count; i++)
 			{
 				cPoint = tempFuture.Dequeue();
+
 				if (i % 10 == 0)
 				{
 					SolidBrush wayPointBrush = new SolidBrush(Color.FromArgb(255 - 255 * i / wayPointLookAhead, 255, 255, 255));
@@ -271,12 +273,17 @@ namespace _12F_Mozgo_dolog
 				for (int i = 0; i < future.Count - 1; i++)
 				{
 					cPoint = tempFuture.Dequeue();
-					if (i % 10 == 0)
+					if (tempFuture.Count > 0)
 					{
-						SolidBrush wayPointBrush = new SolidBrush(Color.FromArgb(255 - 255 * i / wayPointLookAhead, 255, 255, 255));
-						g.FillEllipse(wayPointBrush, cPoint.X - 1 - xOffset, cPoint.Y - 1 - yOffset, 2, 2);
-						wayPointBrush.Dispose();
+						if (i % 10 == 0)
+						{
+							SolidBrush wayPointBrush = new SolidBrush(Color.FromArgb(255 - 255 * i / wayPointLookAhead, 255, 255, 255));
+							g.FillEllipse(wayPointBrush, cPoint.X - 1 - xOffset, cPoint.Y - 1 - yOffset, 2, 2);
+							wayPointBrush.Dispose();
+						}
 					}
+					else                 
+                        g.FillEllipse(opaqueBrush, cPoint.X - height / 2 - xOffset, cPoint.Y - height / 2 - yOffset, height, height);
 				}
 				tempFuture.Clear();
 
@@ -287,6 +294,7 @@ namespace _12F_Mozgo_dolog
 					for (int i = 0; i < history.Count; i++)
 					{
 						cPoint = tempHistroy.Dequeue();
+
 						if (i % 10 == 0)
 						{
 							SolidBrush wayPointBrush = new SolidBrush(Color.FromArgb(255 * i / history.Count, 255, 255, 255));
