@@ -125,62 +125,82 @@ namespace _12F_Mozgo_dolog
 		}
 
 
-		private async void addPlanet1_Click(object sender, EventArgs e)
+
+        /// <summary>
+        /// Add a planet after clicking the addPlanet1 button
+        /// </summary>
+        private void addPlanet1_Click(object sender, EventArgs e)
 		{
-			stop_Click(null, null);
 
-			lastMousePos = new Vector(MousePosition.X, MousePosition.Y);
-			CelestialBody mars = new CelestialBody("mars", new Vector(MousePosition), new Vector(0, 0), 40, 30, Properties.Resources.mars, true);
+			AddPlanet("mars", 40, 30, Properties.Resources.mars); 
 
-			await Task.Run(() =>
-			{
-				mars.placing = true;
-
-				placing = mars;				
-				while (placing != null)
-				{
-					if (pictureBox1.InvokeRequired)
-					{
-						pictureBox1.Invoke(new MethodInvoker(
-						delegate ()
-						{
-							mars.location = new Vector(pictureBox1.PointToClient(Cursor.Position)) + screenOffset;
-							CelestialBody.DrawAllPlacement(pictureBox1);
-						}));
-					}
-					else
-					{
-						mars.location = new Vector(pictureBox1.PointToClient(Cursor.Position)) + screenOffset;
-						CelestialBody.DrawAllPlacement(pictureBox1);
-					}
-
-					CelestialBody.UpdateFPS();
-                }
-				mars.placing = false;
-
-				following = mars;
-				screenOffset = following.location - new Vector(pictureBox1.Width / 2, pictureBox1.Height / 2);
-
-
-				vectoring = mars;
-				mars.vectoring = true;
-				lastMousePos = new Vector(MousePosition) + (lastScreenOffset - screenOffset);
-				while (vectoring != null)
-				{
-					mars.velocity = (lastMousePos - new Vector(MousePosition)) / 100;
-					CelestialBody.DrawAllPlacement(pictureBox1);
-				}
-
-
-				CelestialBody.CalcAllGVectors();
-				CelestialBody.SetAllVelocity();
-				CelestialBody.MoveAll();
-
-
-				CelestialBody.DrawAll(pictureBox1);
-			});
-
-			start_Click(null, null);			
 		}
+
+
+        /// <summary>
+        /// The procedure of adding a planet
+		/// It will create a new planet object, and lets the user place it and set its vectors 
+        /// </summary>
+        /// <param name="name">The name of the planet</param>
+        /// <param name="size">The size of the planet in pixels</param>
+        /// <param name="mass">The mass of the planet</param>
+        /// <param name="image">The Bitmap image of the planet</param>
+        private async void AddPlanet(string name, int size, int mass, Bitmap image)
+		{
+            stop_Click(null, null); // pauses the simulation
+
+            lastMousePos = new Vector(MousePosition.X, MousePosition.Y);
+            CelestialBody newPlanet = new CelestialBody(name, new Vector(MousePosition), new Vector(0, 0), size, mass, image, true);
+
+            await Task.Run(() =>
+            {
+                newPlanet.placing = true;
+
+                placing = newPlanet;
+                while (placing != null)
+                {
+                    if (pictureBox1.InvokeRequired)
+                    {
+                        pictureBox1.Invoke(new MethodInvoker(
+                        delegate ()
+                        {
+                            newPlanet.location = new Vector(pictureBox1.PointToClient(Cursor.Position)) + screenOffset;
+                            CelestialBody.DrawAllPlacement(pictureBox1);
+                        }));
+                    }
+                    else
+                    {
+                        newPlanet.location = new Vector(pictureBox1.PointToClient(Cursor.Position)) + screenOffset;
+                        CelestialBody.DrawAllPlacement(pictureBox1);
+                    }
+
+                    CelestialBody.UpdateFPS();
+                }
+                newPlanet.placing = false;
+
+                following = newPlanet;
+                screenOffset = following.location - new Vector(pictureBox1.Width / 2, pictureBox1.Height / 2);
+
+
+                vectoring = newPlanet;
+                newPlanet.vectoring = true;
+                lastMousePos = new Vector(MousePosition) + (lastScreenOffset - screenOffset);
+                while (vectoring != null)
+                {
+                    newPlanet.velocity = (lastMousePos - new Vector(MousePosition)) / 100;
+                    CelestialBody.DrawAllPlacement(pictureBox1);
+                }
+
+
+                CelestialBody.CalcAllGVectors();
+                CelestialBody.SetAllVelocity();
+                CelestialBody.MoveAll();
+
+
+                CelestialBody.DrawAll(pictureBox1);
+            });
+
+            start_Click(null, null); // resumes the game
+        }
     }
 }

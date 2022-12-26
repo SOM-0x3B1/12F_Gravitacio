@@ -349,6 +349,7 @@ namespace _12F_Mozgo_dolog
 		}
 
 
+
 		private static void Refresh(Control pictureBox1) //a fő szálon futó pictureBox1 frissítése
 		{
 			if (pictureBox1.InvokeRequired)
@@ -362,7 +363,7 @@ namespace _12F_Mozgo_dolog
 			else
 				pictureBox1.Refresh();
 		}
-        private static void SetText(Label label, string text) //a fő szálon futó pictureBox1 frissítése
+        private static void SetText(Label label, string text)
         {
             if (label.InvokeRequired)
             {
