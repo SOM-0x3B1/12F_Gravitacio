@@ -138,8 +138,8 @@ namespace _12F_Mozgo_dolog
 
 
         /// <summary>
-        /// The procedure of adding a planet
-		/// It will create a new planet object, and lets the user place it and set its vectors 
+        /// The procedure of adding a new planet
+		/// It will create a new planet object, and will let the user place it and set its vectors 
         /// </summary>
         /// <param name="name">The name of the planet</param>
         /// <param name="size">The size of the planet in pixels</param>
